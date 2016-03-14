@@ -115,7 +115,4 @@ public class Person {
                 ", dateOfBirth=" + dateOfBirth + 
                 ", dateOfDeath=" + dateOfDeath + '}';
     }
-    
-    
-    
 }

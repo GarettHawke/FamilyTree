@@ -37,6 +37,7 @@ public class MarriageTest {
         assertThat("Marriage spouse1 == null" + source, m.getSpouse1(), is(not(equalTo(null))));
         assertThat("Marriage spouse2 == null" + source, m.getSpouse2(), is(not(equalTo(null))));
         assertThat("Marriage dateFrom == null" + source, m.getFrom(), is(not(equalTo(null))));
+        assertThat("Marriage spouse1 == spouse2" + source, m.getSpouse1(), is(not(equalTo(m.getSpouse2()))));
         
         assertThat("Marriage id != spouse1" + source, m.getSpouse1(), is(equalTo(spouse1)));
         assertThat("Marriage id != spouse2" + source, m.getSpouse2(), is(equalTo(spouse2)));
