@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: cz.muni.fi.pb168.familytree.MarriageTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 0.094 sec <<< FAILURE!
-getters(cz.muni.fi.pb168.familytree.MarriageTest)  Time elapsed: 0 sec  <<< FAILURE!
+Tests run: 2, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 0.116 sec <<< FAILURE!
+getters(cz.muni.fi.pb168.familytree.MarriageTest)  Time elapsed: 0.016 sec  <<< FAILURE!
 java.lang.AssertionError: Marriage id == null; Using Construstor()
 Expected: is not null
      but: was null
