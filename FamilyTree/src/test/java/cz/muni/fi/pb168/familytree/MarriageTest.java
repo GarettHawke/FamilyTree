@@ -21,6 +21,11 @@ public class MarriageTest {
         spouse2 = new Person("Jane Doe", GenderType.WOMAN, "Different hospital", date.minusYears(50));
         m = new Marriage(spouse1, spouse2, date.minusYears(20));
         getters("; Using Construstor()");
+        try {
+            m = new Marriage(spouse1, spouse1, date.minusYears(20));
+        } catch (IllegalArgumentException e) {
+            //ok
+        }
     }
     
     @Test
@@ -30,6 +35,20 @@ public class MarriageTest {
         m.setSpouse2(spouse2);
         m.setFrom(date.minusYears(20));
         getters("; Using setters()");
+        
+        try {
+            m.setSpouse1(spouse2);
+            fail("Spouse1 can be set to spouse2");
+        } catch (IllegalArgumentException e) {
+            //ok
+        }
+        
+        try {
+            m.setSpouse2(spouse1);
+            fail("Spouse2 can be set to spouse1");
+        } catch (IllegalArgumentException e) {
+            //ok
+        }
     }
     
     private void getters(String source) {

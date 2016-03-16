@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import static org.hamcrest.CoreMatchers.*;
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.junit.rules.ExpectedException;
 
 /**
  *
@@ -19,6 +18,13 @@ public class PersonTest {
     public void constructor() {
         p = new Person("Jhon Doe", GenderType.MAN, "Hospital", date.minusDays(10));
         getters("; Using Construstor()");
+        
+        try {
+            p = new Person("Jhon Doe", GenderType.MAN, "Hospital", date, "The same Hospital", date.minusDays(10));
+            fail("Constructing Person with dateOfBirth after dateOfDeath didn't throw any exception");
+        } catch (IllegalArgumentException e) {
+            //ok
+        }
     }
     
     @Test
@@ -29,7 +35,6 @@ public class PersonTest {
         p.setPlaceOfBirth("Hospital");
         p.setDateOfBirth(date.minusDays(10));
         getters("; Using setters()");
-        
         
         try {
             p.setDateOfBirth(p.getDateOfDeath().plusDays(1));
