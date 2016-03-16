@@ -23,6 +23,7 @@ public class MarriageTest {
         getters("; Using Construstor()");
         try {
             m = new Marriage(spouse1, spouse1, date.minusYears(20));
+            fail("Spouse 1 and 2 can be set to same Person using constructor");
         } catch (IllegalArgumentException e) {
             //ok
         }
