@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import static org.hamcrest.CoreMatchers.*;
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.junit.rules.ExpectedException;
 
 /**
  *
@@ -28,10 +29,26 @@ public class PersonTest {
         p.setPlaceOfBirth("Hospital");
         p.setDateOfBirth(date.minusDays(10));
         getters("; Using setters()");
+        
+        
+        try {
+            p.setDateOfBirth(p.getDateOfDeath().plusDays(1));
+            fail("Setting dateOfBirth after dateOfDeath didn't throw any exception");
+        } catch (IllegalArgumentException e) {
+            //ok
+        }
+        
+        try {
+            p.setDateOfDeath(p.getDateOfBirth().minusDays(1));
+            fail("Setting dateOfDeath before dateOfBirth didn't throw any exception");
+        } catch (IllegalArgumentException e) {
+            //ok
+        }
     }
     
     private void getters(String source) {
         assertThat("Person id == null" + source, p.getId(), is(not(equalTo(null))));
+        assertThat("Person Name == null" + source, p.getName(), is(not(equalTo(null))));
         assertThat("Person gender == null" + source, p.getGender(), is(not(equalTo(null))));
         assertThat("Person birthPlace == null" + source, p.getPlaceOfBirth(), is(not(equalTo(null))));
         assertThat("Person birthDay == null" + source, p.getDateOfBirth(), is(not(equalTo(null))));

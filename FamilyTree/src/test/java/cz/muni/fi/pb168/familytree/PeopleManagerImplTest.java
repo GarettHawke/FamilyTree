@@ -1,5 +1,6 @@
 package cz.muni.fi.pb168.familytree;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import static org.hamcrest.CoreMatchers.*;
 import org.junit.*;
@@ -16,48 +17,39 @@ public class PeopleManagerImplTest {
     private final LocalDate date = LocalDate.now();
     
     @Before
-    public void setUp() {
+    public void setUp() throws SQLException {
         manager = new PeopleManagerImpl();
         p0 = new Person("p0", GenderType.MAN, "p0Birth", date.minusYears(30), "p0Death", date);
     }
     
     @Test
     public void create() {
-        manager.createPerson(p0);
-        id = p0.getId();
-        
-        assertThat("Id of saved Person == null", id, is(not(equalTo(null))));
-        assertThat("Retrieved Person != saved Person", manager.findPeronById(id), is(equalTo(p0)));
-    }
-    
-    @Test
-    public void update() {
         Person p1 = new Person("p1", GenderType.MAN, "p1Birth", date.minusYears(30), "p1Death", date);
         manager.createPerson(p1);
         
-        p0.setName(null);
-        update("Name to null");
-        
         p0.setName("Jhon Doe");
-        update("Name");
+        create("Name");
+        
+        assertThat("Id of saved Person == null", id, is(not(equalTo(null))));
+        assertThat("Retrieved Person != saved Person", manager.findPeronById(id), is(equalTo(p0)));
         
         p0.setGender(GenderType.WOMAN);
-        update("gender");
+        create("gender");
         
         p0.setPlaceOfBirth("!p0Birth");
-        update("placeOfBirth");
+        create("placeOfBirth");
         
         p0.setDateOfBirth(date);
-        update("dateOfBirth");
+        create("dateOfBirth");
         
         p0.setPlaceOfDeath("!p0Death");
-        update("placeOfDeath");
+        create("placeOfDeath");
         
         p0.setDateOfDeath(date.minusDays(1));
-        update("dateOfDeath");
+        create("dateOfDeath");
     }
     
-    private void update(String source) {
+    private void create(String source) {
         p0 = new Person("p0", GenderType.MAN, "p0Birth", date.minusYears(30), "p0Death", date);
         manager.createPerson(p0);
         id = p0.getId();
