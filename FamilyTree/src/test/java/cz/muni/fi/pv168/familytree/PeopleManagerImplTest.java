@@ -1,9 +1,5 @@
 package cz.muni.fi.pv168.familytree;
 
-import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
-import cz.muni.fi.pv168.familytree.PeopleManager;
-import cz.muni.fi.pv168.familytree.GenderType;
-import cz.muni.fi.pv168.familytree.Person;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import static org.hamcrest.CoreMatchers.*;
