@@ -27,6 +27,13 @@ public class PeopleManagerImplTest {
         Person p1 = new Person("p1", GenderType.MAN, "p1Birth", date.minusYears(30), "p1Death", date);
         manager.createPerson(p1);
         
+        p0.setId(1L);
+        try{
+            create("Id");
+        } catch (IllegalArgumentException e) {
+            //ok
+        }
+        
         p0.setName("Jhon Doe");
         create("Name");
         

@@ -52,13 +52,13 @@ public class PersonTest {
     }
     
     private void getters(String source) {
-        assertThat("Person id == null" + source, p.getId(), is(not(equalTo(null))));
+        assertThat("Person id != null" + source, p.getId(), is(equalTo(null)));
         assertThat("Person Name == null" + source, p.getName(), is(not(equalTo(null))));
         assertThat("Person gender == null" + source, p.getGender(), is(not(equalTo(null))));
         assertThat("Person birthPlace == null" + source, p.getPlaceOfBirth(), is(not(equalTo(null))));
         assertThat("Person birthDay == null" + source, p.getDateOfBirth(), is(not(equalTo(null))));
         
-        assertThat("Person id != \"Jhon Doe\"" + source, p.getId(), is(equalTo("Jhon Doe")));
+        assertThat("Person id != \"Jhon Doe\"" + source, p.getName(), is(equalTo("Jhon Doe")));
         assertThat("Person gender != GenderType.MAN" + source, p.getGender(), is(equalTo(GenderType.MAN)));
         assertThat("Person placeOfBirth != \"Hospital\"" + source, p.getPlaceOfBirth(), is(equalTo("Hospital")));
         assertThat("Person birthDay != date.minusDays(10)" + source, p.getDateOfBirth(), is(equalTo(date.minusDays(10))));
