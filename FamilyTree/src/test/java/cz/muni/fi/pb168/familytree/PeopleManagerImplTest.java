@@ -30,6 +30,7 @@ public class PeopleManagerImplTest {
         p0.setId(1L);
         try{
             create("Id");
+            fail("Should reject given id");
         } catch (IllegalArgumentException e) {
             //ok
         }
