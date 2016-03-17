@@ -47,15 +47,15 @@ public class PeopleManagerImplTest {
         
         p0.setDateOfDeath(date.minusDays(1));
         create("dateOfDeath");
+        
+        assertThat("p1 was changed while changing p0", manager.findPeronById(p1.getId()), is(equalTo(p1)) );
     }
     
     private void create(String source) {
-        p0 = new Person("p0", GenderType.MAN, "p0Birth", date.minusYears(30), "p0Death", date);
         manager.createPerson(p0);
+        p0 = manager.findPeronById(id);
         id = p0.getId();
         
-        manager.updatePerson(p0);
-        p0 = manager.findPeronById(id);
         if (source.equals("Name")) {
             assertThat("Name was not changed when changing Name", p0.getName(), is(not(equalTo("p0"))));
         } else {
@@ -91,6 +91,7 @@ public class PeopleManagerImplTest {
         } else {
             assertThat("dateOfDeath was changed when changing " + source, p0.getDateOfDeath(), is(equalTo(date)));
         }
+        p0 = new Person("p0", GenderType.MAN, "p0Birth", date.minusYears(30), "p0Death", date);
     }
     
     @Test
