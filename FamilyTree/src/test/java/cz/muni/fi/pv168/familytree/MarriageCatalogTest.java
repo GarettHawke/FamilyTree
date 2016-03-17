@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
  *
  * 
  */
-public class MarriageTest {
+public class MarriageCatalogTest {
     
     private Marriage m;
     private Person spouse1, spouse2;
