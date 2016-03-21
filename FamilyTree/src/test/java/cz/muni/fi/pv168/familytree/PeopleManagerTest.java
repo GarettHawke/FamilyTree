@@ -2,6 +2,8 @@ package cz.muni.fi.pv168.familytree;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import javax.annotation.Resource;
+import javax.sql.DataSource;
 import static org.hamcrest.CoreMatchers.*;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -17,10 +19,12 @@ public class PeopleManagerTest {
     private Person p0;
     private Long id;
     private final LocalDate date = LocalDate.now();
+    @Resource(name = "jdbc:derby://localhost:1527/pv168")
+    private DataSource ds;
     
     @Before
     public void setUp() throws SQLException {
-        manager = new PeopleManagerImpl();
+        manager = new PeopleManagerImpl(ds);
         p0 = new Person("p0", GenderType.MAN, "p0Birth", date.minusYears(30), "p0Death", date);
     }
     
