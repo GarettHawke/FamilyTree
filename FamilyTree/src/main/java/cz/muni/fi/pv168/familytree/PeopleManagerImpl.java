@@ -40,7 +40,7 @@ public class PeopleManagerImpl implements PeopleManager {
     }
 
     @Override
-    public void createPerson(Person p) {
+    public void createPerson(Person p) throws ServiceFailureException {
         validate(p);
         if (p.getId() != null) {
             throw new IllegalArgumentException("Person id is already set");
@@ -49,8 +49,8 @@ public class PeopleManagerImpl implements PeopleManager {
         try (
             Connection connection = dataSource.getConnection();
             PreparedStatement st = connection.prepareStatement(
-                    "INSERT INTO PEOPLE (name,gender,birthDate,birthPlace,"+
-                            "deathDate,deathPlace) VALUES (?,?,?,?,?,?)",
+                    "INSERT INTO PEOPLE (name,gender,birthDate,birthPlace,"
+                            + "deathDate,deathPlace) VALUES (?,?,?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS)) {
             st.setString(1, p.getName());
             st.setString(2, p.getGender().toString());
@@ -62,14 +62,15 @@ public class PeopleManagerImpl implements PeopleManager {
             int addedRows = st.executeUpdate();
             if (addedRows != 1) {
                 throw new ServiceFailureException("Internal Error: More rows ("
-                    + addedRows + ") inserted when trying to insert grave " + p);
+                        + addedRows + ") inserted when trying to insert person " + p);
             }
             
             ResultSet keyRS = st.getGeneratedKeys();
             p.setId(getKey(keyRS, p));
         
         } catch (SQLException ex) {
-        
+            throw new ServiceFailureException(
+                    "Error when creating person " + p, ex);
         }
         
     }
@@ -78,19 +79,19 @@ public class PeopleManagerImpl implements PeopleManager {
         if (keyRS.next()) {
             if (keyRS.getMetaData().getColumnCount() != 1) {
                 throw new ServiceFailureException("Internal Error: Generated key"
-                        + "retriving failed when trying to insert grave " + p
+                        + "retrieving failed when trying to insert person " + p
                         + " - wrong key fields count: " + keyRS.getMetaData().getColumnCount());
             }
             Long result = keyRS.getLong(1);
             if (keyRS.next()) {
                 throw new ServiceFailureException("Internal Error: Generated key"
-                        + "retriving failed when trying to insert grave " + p
+                        + "retrieving failed when trying to insert person " + p
                         + " - more keys found");
             }
             return result;
         } else {
             throw new ServiceFailureException("Internal Error: Generated key"
-                    + "retriving failed when trying to insert grave " + p
+                    + "retrieving failed when trying to insert person " + p
                     + " - no key found");
         }
     }
@@ -105,8 +106,8 @@ public class PeopleManagerImpl implements PeopleManager {
         try (
             Connection connection = dataSource.getConnection();
             PreparedStatement st = connection.prepareStatement(
-                "UPDATE PEOPLE SET name = ?, gender = ?, birthDate = ?, "+
-                        "birthPlace = ?, deathDate = ?, deathPlace = ? WHERE id = ?")) {
+                "UPDATE PEOPLE SET name = ?, gender = ?, birthDate = ?, "
+                        + "birthPlace = ?, deathDate = ?, deathPlace = ? WHERE id = ?")) {
             st.setString(1, p.getName());
             st.setString(2, p.getGender().toString());
             st.setDate(3, java.sql.Date.valueOf(p.getDateOfBirth()));
@@ -119,7 +120,8 @@ public class PeopleManagerImpl implements PeopleManager {
             if (count == 0) {
                 throw new SQLException("Person " + p + " was not found in database!");
             } else if (count != 1) {
-                throw new ServiceFailureException("Invalid updated rows count detected (one row should be updated): " + count);
+                throw new ServiceFailureException("Invalid updated rows count detected"
+                        + "(one row should be updated): " + count);
             }
         } catch (SQLException ex) {
             throw new ServiceFailureException(
@@ -139,9 +141,9 @@ public class PeopleManagerImpl implements PeopleManager {
         try (
             Connection connection = dataSource.getConnection();
             PreparedStatement st = connection.prepareStatement(
-                "DELETE FROM PEOPLE WHERE id = ?")) {
-            
+                    "DELETE FROM PEOPLE WHERE id = ?")) {
             st.setLong(1, p.getId());
+            
             int count = st.executeUpdate();
             if (count == 0) {
                 throw new SQLException("Person " + p + " was not found in database!");
@@ -160,10 +162,10 @@ public class PeopleManagerImpl implements PeopleManager {
         try (
             Connection connection = dataSource.getConnection();
             PreparedStatement st = connection.prepareStatement(
-                    "SELECT name,gender,birthdate,birthplace,"+
-                            "deathdate,deathplace FROM PEOPLE WHERE id = ?")) {
-            
+                    "SELECT name,gender,birthDate,birthPlace,"
+                            + "deathDate,deathPlace FROM PEOPLE WHERE id = ?")) {
             st.setLong(1, id);
+            
             ResultSet rs = st.executeQuery();
             
             if (rs.next()) {
@@ -187,8 +189,8 @@ public class PeopleManagerImpl implements PeopleManager {
     
     private Person resultSetToPerson(ResultSet rs) throws SQLException {
         return new Person(rs.getString("name"), GenderType.valueOf(rs.getString("gender")), 
-            rs.getString("birthPlace"), rs.getDate("birthDate").toLocalDate(),
-            rs.getString("deathPlace"), rs.getDate("deathDate").toLocalDate());
+                rs.getString("birthPlace"), rs.getDate("birthDate").toLocalDate(),
+                rs.getString("deathPlace"), rs.getDate("deathDate").toLocalDate());
     }
 
     @Override
@@ -196,8 +198,8 @@ public class PeopleManagerImpl implements PeopleManager {
         try (
             Connection connection = dataSource.getConnection();
             PreparedStatement st = connection.prepareStatement(
-                    "SELECT name,gender,birthdate,birthplace,"+
-                            "deathdate,deathplace FROM PEOPLE")) {
+                    "SELECT name,gender,birthDate,birthPlace,"
+                            + "deathDate,deathPlace FROM PEOPLE")) {
 
             ResultSet rs = st.executeQuery();
 
