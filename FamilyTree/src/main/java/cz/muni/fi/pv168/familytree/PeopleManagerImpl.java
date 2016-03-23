@@ -7,11 +7,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 
 public class PeopleManagerImpl implements PeopleManager {
     
+    @Resource(name = "jdbc:derby://localhost:1527/pv168")
     private final DataSource dataSource;
 
     public PeopleManagerImpl(DataSource dataSource) {

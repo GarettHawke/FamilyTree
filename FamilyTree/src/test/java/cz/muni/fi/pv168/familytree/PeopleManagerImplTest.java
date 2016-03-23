@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  * 
  */ 
 
-public class PeopleManagerTest {
+public class PeopleManagerImplTest {
     
     private enum Source {id, name, gender, placeOfBirth, dateOfBirth, placeOfDeath, dateOfDeath}
     private PeopleManager manager;
@@ -31,20 +31,22 @@ public class PeopleManagerTest {
     @Test
     public void update() {
         Person p1 = new Person("p1", GenderType.MAN, "p1Birth", date.minusYears(30), "p1Death", date);
+        
+        p0.setId(1L);
+        try{
+            manager.createPerson(p0);
+            fail("Should reject given id");
+        } catch (IllegalArgumentException e) {
+            p0.setId(null);
+        }
+        
         manager.createPerson(p0);
         manager.createPerson(p1);
         id = p0.getId();
         
+        
         assertThat("Id of saved Person == null", id, is(not(equalTo(null))));
         assertThat("Retrieved Person != saved Person", manager.findPersonById(id), is(equalTo(p0)));
-        
-        p0.setId(1L);
-        try{
-            update(Source.id);
-            fail("Should reject given id");
-        } catch (IllegalArgumentException e) {
-            p0.setId(id);
-        }
         
         p0.setName("Jhon Doe");
         update(Source.name);
@@ -64,12 +66,13 @@ public class PeopleManagerTest {
         p0.setDateOfDeath(date.minusDays(1));
         update(Source.dateOfDeath);
         
-        assertThat("p1 was changed while changing p0", manager.findPersonById(p1.getId()), is(equalTo(p1)) );
+        assertThat("p1 was changed while changing p0", manager.findPersonById(p1.getId()), is(equalTo(p1)));
     }
     
     private void update(Source source) {
         Person temp = manager.findPersonById(id);
         manager.updatePerson(p0);
+        p0 = manager.findPersonById(id);
         
         if (source == Source.name) {
             assertThat("Name was not changed when changing name", p0.getName(), is(not(equalTo("p0"))));
@@ -106,12 +109,13 @@ public class PeopleManagerTest {
         } else {
             assertThat("dateOfDeath was changed when changing " + source, p0.getDateOfDeath(), is(equalTo(date)));
         }
+        p0 = temp;
         manager.updatePerson(temp);
     }
     
     @Test
     public void equals() {
-        Person person = new Person();
+        Person person = new Person("!p1", GenderType.MAN, "!p1Birth", date.minusYears(30), "!p1Death", date);
         manager.createPerson(person);
         id = person.getId();
         
@@ -126,6 +130,7 @@ public class PeopleManagerTest {
         
         try {
             p0 = new Person("Jhon Doe", GenderType.MAN, "Hospital", date, "The same Hospital", date.minusDays(10));
+            manager.createPerson(p0);
             fail("Constructing Person with dateOfBirth after dateOfDeath didn't throw any exception");
         } catch (IllegalArgumentException e) {
             //ok
@@ -143,13 +148,17 @@ public class PeopleManagerTest {
         
         try {
             p0.setDateOfBirth(p0.getDateOfDeath().plusDays(1));
+            p0.setId(null);
+            manager.createPerson(p0);
             fail("Setting dateOfBirth after dateOfDeath didn't throw any exception");
         } catch (IllegalArgumentException e) {
-            //ok
+            p0.setDateOfBirth(date.minusDays(10));
         }
         
         try {
             p0.setDateOfDeath(p0.getDateOfBirth().minusDays(1));
+            p0.setId(null);
+            manager.createPerson(p0);
             fail("Setting dateOfDeath before dateOfBirth didn't throw any exception");
         } catch (IllegalArgumentException e) {
             //ok
@@ -157,7 +166,8 @@ public class PeopleManagerTest {
     }
     
     private void getters(String source) {
-        assertThat("Person id != null" + source, p0.getId(), is(equalTo(null)));
+        manager.createPerson(p0);
+        assertThat("Person id == null" + source, p0.getId(), is(not(equalTo(null))));
         assertThat("Person Name == null" + source, p0.getName(), is(not(equalTo(null))));
         assertThat("Person gender == null" + source, p0.getGender(), is(not(equalTo(null))));
         assertThat("Person birthPlace == null" + source, p0.getPlaceOfBirth(), is(not(equalTo(null))));
@@ -172,9 +182,12 @@ public class PeopleManagerTest {
         
         if (source.equals("; Using Constructor()")) {
             p0 = new Person("Jhon Doe", GenderType.MAN, "Hospital", date.minusDays(10), "The same Hospital", date );
+            manager.createPerson(p0);
         } else {
             p0.setPlaceOfDeath("The same Hospital");
             p0.setDateOfDeath(date);
+            p0.setId(null);
+            manager.createPerson(p0);
         }
         
         assertThat("Person placeOfDeath != \"The same Hospital\"" + source, p0.getPlaceOfDeath(), is(equalTo("The same Hospital")));
