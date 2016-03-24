@@ -165,7 +165,7 @@ public class PeopleManagerImpl implements PeopleManager {
         try (
             Connection connection = dataSource.getConnection();
             PreparedStatement st = connection.prepareStatement(
-                    "SELECT name,gender,birthDate,birthPlace,"
+                    "SELECT id,name,gender,birthDate,birthPlace,"
                             + "deathDate,deathPlace FROM PEOPLE WHERE id = ?")) {
             st.setLong(1, id);
             
@@ -179,7 +179,6 @@ public class PeopleManagerImpl implements PeopleManager {
                             "Internal error: More entities with the same id found "
                             + "(source id: " + id + ", found " + p + " and " + resultSetToPerson(rs));
                 }
-                p.setId(id);
                 return p;
             } else {
                 return null;
@@ -191,9 +190,11 @@ public class PeopleManagerImpl implements PeopleManager {
     }
     
     private Person resultSetToPerson(ResultSet rs) throws SQLException {
-        return new Person(rs.getString("name"), GenderType.valueOf(rs.getString("gender")), 
+        Person ret = new Person(rs.getString("name"), GenderType.valueOf(rs.getString("gender")), 
                 rs.getString("birthPlace"), rs.getDate("birthDate").toLocalDate(),
                 rs.getString("deathPlace"), rs.getDate("deathDate").toLocalDate());
+        ret.setId(rs.getLong("id"));
+        return ret;
     }
 
     @Override
@@ -201,7 +202,7 @@ public class PeopleManagerImpl implements PeopleManager {
         try (
             Connection connection = dataSource.getConnection();
             PreparedStatement st = connection.prepareStatement(
-                    "SELECT name,gender,birthDate,birthPlace,"
+                    "SELECT id,name,gender,birthDate,birthPlace,"
                             + "deathDate,deathPlace FROM PEOPLE")) {
 
             ResultSet rs = st.executeQuery();

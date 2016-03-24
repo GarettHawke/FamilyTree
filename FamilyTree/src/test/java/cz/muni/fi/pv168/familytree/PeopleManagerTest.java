@@ -26,11 +26,7 @@ public class PeopleManagerTest {
     
     private static DataSource prepareDataSource() throws SQLException {
         EmbeddedDataSource ds = new EmbeddedDataSource();
-        //we will use in memory database
-        ds.setDatabaseName("//localhost:1527/pv168-ft");
-        ds.setUser("");
-        ds.setPassword("");
-        //ds.setDatabaseName("memory:PersonMngr-test");
+        ds.setDatabaseName("memory:PersonMngr-test");
         ds.setCreateDatabase("create");
         return ds;
     }
