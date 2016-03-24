@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  * 
  */ 
 
-public class PeopleManagerImplTest {
+public class PeopleManagerTest {
     
     private enum Source {id, name, gender, placeOfBirth, dateOfBirth, placeOfDeath, dateOfDeath}
     private PeopleManager manager;
