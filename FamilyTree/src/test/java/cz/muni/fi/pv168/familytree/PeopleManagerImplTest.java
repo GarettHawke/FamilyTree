@@ -1,9 +1,10 @@
 package cz.muni.fi.pv168.familytree;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import javax.annotation.Resource;
 import javax.sql.DataSource;
+import org.apache.derby.jdbc.EmbeddedDataSource;
 import static org.hamcrest.CoreMatchers.*;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -19,13 +20,48 @@ public class PeopleManagerImplTest {
     private Person p0;
     private Long id;
     private final LocalDate date = LocalDate.now();
-    @Resource(name = "jdbc:derby://localhost:1527/pv168")
     private DataSource ds;
+    
+    private static DataSource prepareDataSource() throws SQLException {
+        EmbeddedDataSource ds = new EmbeddedDataSource();
+        //we will use in memory database
+        ds.setDatabaseName("//localhost:1527/pv168-ft");
+        ds.setUser("");
+        ds.setPassword("");
+        //ds.setDatabaseName("memory:gravemgr-test");
+        ds.setCreateDatabase("create");
+        return ds;
+    }
     
     @Before
     public void setUp() throws SQLException {
+        ds = prepareDataSource();
+        try (Connection connection = ds.getConnection()) {
+            connection.prepareStatement("CREATE TABLE PEOPLE (" +
+                                        "ID INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY," +
+                                        "NAME VARCHAR(50)," +
+                                        "GENDER VARCHAR(10)," +
+                                        "BIRTHDATE DATE," +
+                                        "BIRTHPLACE VARCHAR(50)," +
+                                        "DEATHDATE DATE," +
+                                        "DEATHPLACE VARCHAR(50))").executeUpdate();
+        }
         manager = new PeopleManagerImpl(ds);
         p0 = new Person("p0", GenderType.MAN, "p0Birth", date.minusYears(30), "p0Death", date);
+    }
+
+    
+    /*@Before
+    public void setUp() throws SQLException {
+        manager = new PeopleManagerImpl(ds);
+        p0 = new Person("p0", GenderType.MAN, "p0Birth", date.minusYears(30), "p0Death", date);
+    }*/
+    
+    @After
+    public void tearDown() throws SQLException {
+        try (Connection connection = ds.getConnection()) {
+            connection.prepareStatement("DROP TABLE PEOPLE").executeUpdate();
+        }
     }
     
     @Test

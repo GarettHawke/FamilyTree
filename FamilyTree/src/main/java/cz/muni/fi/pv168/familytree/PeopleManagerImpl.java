@@ -7,13 +7,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 
 public class PeopleManagerImpl implements PeopleManager {
     
-    @Resource(name = "jdbc:derby://localhost:1527/pv168")
     private final DataSource dataSource;
 
     public PeopleManagerImpl(DataSource dataSource) {
@@ -58,7 +56,10 @@ public class PeopleManagerImpl implements PeopleManager {
             st.setString(2, p.getGender().toString());
             st.setDate(3, java.sql.Date.valueOf(p.getDateOfBirth()));
             st.setString(4, p.getPlaceOfBirth());
-            st.setDate(5, java.sql.Date.valueOf(p.getDateOfDeath()));
+            if(p.getDateOfDeath() != null)
+                st.setDate(5, java.sql.Date.valueOf(p.getDateOfDeath()));
+            else
+                st.setDate(5, null);
             st.setString(6, p.getPlaceOfDeath());
             
             int addedRows = st.executeUpdate();
@@ -178,7 +179,7 @@ public class PeopleManagerImpl implements PeopleManager {
                             "Internal error: More entities with the same id found "
                             + "(source id: " + id + ", found " + p + " and " + resultSetToPerson(rs));
                 }
-
+                p.setId(id);
                 return p;
             } else {
                 return null;
