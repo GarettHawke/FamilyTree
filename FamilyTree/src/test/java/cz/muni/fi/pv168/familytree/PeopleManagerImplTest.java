@@ -3,6 +3,8 @@ package cz.muni.fi.pv168.familytree;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import javax.sql.DataSource;
 import org.apache.derby.jdbc.EmbeddedDataSource;
 import static org.hamcrest.CoreMatchers.*;
@@ -28,7 +30,7 @@ public class PeopleManagerImplTest {
         ds.setDatabaseName("//localhost:1527/pv168-ft");
         ds.setUser("");
         ds.setPassword("");
-        //ds.setDatabaseName("memory:gravemgr-test");
+        //ds.setDatabaseName("memory:PersonMngr-test");
         ds.setCreateDatabase("create");
         return ds;
     }
@@ -157,6 +159,22 @@ public class PeopleManagerImplTest {
         
         assertThat("Id of retrieved person and is different than the id it was retrieved by", 
                 manager.findPersonById(id).getId(), is(equalTo(id)));
+    }
+    
+    @Test
+    public void findAll() {
+        Person person = new Person("!p1", GenderType.MAN, "!p1Birth", date.minusYears(30), "!p1Death", date);
+        List<Person> list = new ArrayList<>();
+        list.add(p0);
+        list.add(person);
+        
+        manager.createPerson(p0);
+        manager.createPerson(person);
+        
+        List<Person> otherList = manager.findAllPeople();
+        
+        assertThat("Retrieved list has differents contents than expected",
+                list.containsAll(otherList), is(equalTo(otherList.containsAll(list))));
     }
     
     @Test
