@@ -18,7 +18,7 @@ public class PeopleManagerImpl implements PeopleManager {
         this.dataSource = dataSource;
     }
     
-    private void validate(Person p) throws IllegalArgumentException {
+    public static void validate(Person p) throws IllegalArgumentException {
         if (p == null) {
             throw new IllegalArgumentException("Person was null");
         }
@@ -155,7 +155,7 @@ public class PeopleManagerImpl implements PeopleManager {
             }
         } catch (SQLException ex) {
             throw new ServiceFailureException(
-                    "Error when updating Person " + p, ex);
+                    "Error when deleting Person " + p, ex);
         }
         
     }
@@ -189,10 +189,10 @@ public class PeopleManagerImpl implements PeopleManager {
         }
     }
     
-    private Person resultSetToPerson(ResultSet rs) throws SQLException {
+    public static Person resultSetToPerson(ResultSet rs) throws SQLException {
         Person ret = new Person(rs.getString("name"), GenderType.valueOf(rs.getString("gender")), 
                 rs.getString("birthPlace"), rs.getDate("birthDate").toLocalDate(),
-                rs.getString("deathPlace"), rs.getDate("deathDate").toLocalDate());
+                rs.getString("deathPlace"), (rs.getDate("deathDate") != null) ? rs.getDate("deathDate").toLocalDate() : null);
         ret.setId(rs.getLong("id"));
         return ret;
     }
