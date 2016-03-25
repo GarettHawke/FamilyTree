@@ -1,5 +1,8 @@
 package cz.muni.fi.pv168.familytree;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -24,6 +27,12 @@ public class PeopleManagerTest {
     private final LocalDate date = LocalDate.now();
     private DataSource ds;
     
+    private final String createTablePeople;
+    
+    public PeopleManagerTest() throws IOException {
+        createTablePeople = String.join("", Files.readAllLines(Paths.get("SQL-createTablePeople.sql")));
+    }
+    
     private static DataSource prepareDataSource() throws SQLException {
         EmbeddedDataSource ds = new EmbeddedDataSource();
         ds.setDatabaseName("memory:PersonMngr-test");
@@ -35,14 +44,7 @@ public class PeopleManagerTest {
     public void setUp() throws SQLException {
         ds = prepareDataSource();
         try (Connection connection = ds.getConnection()) {
-            connection.prepareStatement("CREATE TABLE PEOPLE (" +
-                                        "ID INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY," +
-                                        "NAME VARCHAR(50)," +
-                                        "GENDER VARCHAR(10)," +
-                                        "BIRTHDATE DATE," +
-                                        "BIRTHPLACE VARCHAR(50)," +
-                                        "DEATHDATE DATE," +
-                                        "DEATHPLACE VARCHAR(50))").executeUpdate();
+            connection.prepareStatement(createTablePeople).executeUpdate();
         }
         manager = new PeopleManagerImpl(ds);
         p0 = new Person("p0", GenderType.MAN, "p0Birth", date.minusYears(30), "p0Death", date);

@@ -1,5 +1,8 @@
 package cz.muni.fi.pv168.familytree;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -27,12 +30,18 @@ public class RelationCatalogImplTest {
     private final Person person4;
     private final Person person5;
     
-    public RelationCatalogImplTest() {
+    private final String createTablePeople;
+    private final String createTableRelations;
+    
+    public RelationCatalogImplTest() throws IOException {
         person1 = newPerson("Tomas Stein", GenderType.MAN, LocalDate.of(1973, 12, 1), "Bratislava", null, null);
         person2 = newPerson("Zuzana Steinova", GenderType.WOMAN, LocalDate.of(1995, 8, 9), "Brno", null, null);
         person3 = newPerson("Petra Steinova", GenderType.WOMAN, LocalDate.of(1976, 1, 31), "Trencin", null, null);
         person4 = newPerson("Amy Steinova", GenderType.WOMAN, LocalDate.of(1991, 5, 27), "Bratislava", null, null);
         person5 = newPerson("Gregor Stein", GenderType.MAN, LocalDate.of(1974, 10, 14), "Bratislava", null, null);
+        
+        createTablePeople = String.join("", Files.readAllLines(Paths.get("SQL-createTablePeople.sql")));
+        createTableRelations = String.join("", Files.readAllLines(Paths.get("SQL-createTableRelations.sql")));
     }
     
     private static DataSource prepareDataSource() throws SQLException {
@@ -42,39 +51,11 @@ public class RelationCatalogImplTest {
         return ds;
     }
     
-    /*@BeforeClass
-    public void setUpClass() throws SQLException {
-        ds = prepareDataSource();
-        try (Connection connection = ds.getConnection()) {
-            connection.prepareStatement("CREATE TABLE PEOPLE (" +
-                                        "ID INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY," +
-                                        "NAME VARCHAR(50)," +
-                                        "GENDER VARCHAR(10)," +
-                                        "BIRTHDATE DATE," +
-                                        "BIRTHPLACE VARCHAR(50)," +
-                                        "DEATHDATE DATE," +
-                                        "DEATHPLACE VARCHAR(50))").executeUpdate();
-        }
-        PeopleManagerImpl mngr = new PeopleManagerImpl(ds);
-        mngr.createPerson(person1);
-        mngr.createPerson(person2);
-        mngr.createPerson(person3);
-        mngr.createPerson(person4);
-        mngr.createPerson(person5);
-    }*/
-    
     @Before
     public void setUp() throws SQLException {
         ds = prepareDataSource();
         try (Connection connection = ds.getConnection()) {
-            connection.prepareStatement("CREATE TABLE PEOPLE (" +
-                                        "ID INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY," +
-                                        "NAME VARCHAR(50)," +
-                                        "GENDER VARCHAR(10)," +
-                                        "BIRTHDATE DATE," +
-                                        "BIRTHPLACE VARCHAR(50)," +
-                                        "DEATHDATE DATE," +
-                                        "DEATHPLACE VARCHAR(50))").executeUpdate();
+            connection.prepareStatement(createTablePeople).executeUpdate();
         }
         PeopleManagerImpl mngr = new PeopleManagerImpl(ds);
         mngr.createPerson(person1);
@@ -84,16 +65,7 @@ public class RelationCatalogImplTest {
         mngr.createPerson(person5);
         
         try (Connection connection = ds.getConnection()) {
-            connection.prepareStatement("CREATE TABLE RELATIONS (" +
-                                        "PARENT_ID INTEGER NOT NULL," +
-                                        "CHILD_ID INTEGER NOT NULL," +
-                                        "CONSTRAINT REL_ID PRIMARY KEY (PARENT_ID, CHILD_ID)," +
-                                        "CONSTRAINT PARENT_FK " +
-                                        "FOREIGN KEY (PARENT_ID) " +
-                                        "REFERENCES PEOPLE (ID)," +
-                                        "CONSTRAINT CHILD_FK " +
-                                        "FOREIGN KEY (CHILD_ID) " +
-                                        "REFERENCES PEOPLE (ID))").executeUpdate();
+            connection.prepareStatement(createTableRelations).executeUpdate();
         }
         manager = new RelationCatalogImpl(ds);
     }
@@ -107,13 +79,6 @@ public class RelationCatalogImplTest {
             connection.prepareStatement("DROP TABLE PEOPLE").executeUpdate();
         }
     }
-    
-    /*@AfterClass
-    public void tearDownClass() throws SQLException {
-        try (Connection connection = ds.getConnection()) {
-            connection.prepareStatement("DROP TABLE PEOPLE").executeUpdate();
-        }
-    }*/
     
     @Test
     public void makeRelation() {
