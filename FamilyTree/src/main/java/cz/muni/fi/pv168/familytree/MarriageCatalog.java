@@ -8,11 +8,11 @@ import java.util.List;
  */
 public interface MarriageCatalog {
     
-    void createMarriage(Marriage marriage, Person spouse1, Person spouse2);
+    void createMarriage(Marriage marriage);
     
-    void updateMarriage(Long id);
+    void updateMarriage(Marriage marriage);
     
-    void deleteMarriage(Long id);
+    void deleteMarriage(Marriage marriage);
     
     Marriage findMarriageById(Long id);
     

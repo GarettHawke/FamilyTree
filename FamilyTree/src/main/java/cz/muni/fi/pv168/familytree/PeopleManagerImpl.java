@@ -121,7 +121,7 @@ public class PeopleManagerImpl implements PeopleManager {
             
             int count = st.executeUpdate();
             if (count == 0) {
-                throw new SQLException("Person " + p + " was not found in database!");
+                throw new EntityNotFoundException("Person " + p + " was not found in database!");
             } else if (count != 1) {
                 throw new ServiceFailureException("Invalid updated rows count detected"
                         + "(one row should be updated): " + count);
@@ -149,7 +149,7 @@ public class PeopleManagerImpl implements PeopleManager {
             
             int count = st.executeUpdate();
             if (count == 0) {
-                throw new SQLException("Person " + p + " was not found in database!");
+                throw new EntityNotFoundException("Person " + p + " was not found in database!");
             } else if (count != 1) {
                 throw new ServiceFailureException("Invalid deleted rows count detected (one row should be deleted): " + count);
             }

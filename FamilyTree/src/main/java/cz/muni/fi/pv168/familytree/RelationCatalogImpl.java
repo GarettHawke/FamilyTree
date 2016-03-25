@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 
 public class RelationCatalogImpl implements RelationCatalog {
     
-    private static final long ACCEPTEDAGEFORPARENTS = 5;
+    private static final long ACCEPTED_AGE_FOR_PARENTS = 5;
     private final DataSource dataSource;
     
     public RelationCatalogImpl(DataSource dataSource) {
@@ -72,14 +72,8 @@ public class RelationCatalogImpl implements RelationCatalog {
 
     @Override
     public void makeRelation(Person parent, Person child) {
-        PeopleManagerImpl.validate(parent);
-        if(parent.getId() == null) {
-            throw new IllegalArgumentException("parent id is null");
-        }
-        PeopleManagerImpl.validate(child);
-        if(child.getId() == null) {
-            throw new IllegalArgumentException("child id is null");
-        }
+        validate(parent);
+        validate(child);
         validate(parent, child);
         try(
                 Connection connection = dataSource.getConnection();
@@ -100,18 +94,8 @@ public class RelationCatalogImpl implements RelationCatalog {
 
     @Override
     public void deleteRelation(Person parent, Person child) {
-        if(parent == null) {
-            throw new IllegalArgumentException("parent is null");
-        }
-        if(parent.getId() == null) {
-            throw new IllegalArgumentException("parent id is null");
-        }
-        if(child == null) {
-            throw new IllegalArgumentException("child is null");
-        }
-        if(child.getId() == null) {
-            throw new IllegalArgumentException("child id is null");
-        }
+        validate(parent);
+        validate(child);
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement st = connection.prepareStatement(
@@ -140,7 +124,7 @@ public class RelationCatalogImpl implements RelationCatalog {
         if(parent.getDateOfBirth().isAfter(child.getDateOfBirth())) {
             throw new IllegalArgumentException("parent is younger than child");
         }
-        if(parent.getDateOfBirth().isAfter(child.getDateOfBirth().minusYears(ACCEPTEDAGEFORPARENTS))) {
+        if(parent.getDateOfBirth().isAfter(child.getDateOfBirth().minusYears(ACCEPTED_AGE_FOR_PARENTS))) {
             throw new IllegalArgumentException("parent is too young");
         }
         List<Person> parents = findParents(child);
@@ -149,6 +133,13 @@ public class RelationCatalogImpl implements RelationCatalog {
         }
         if(parents.contains(parent)) {
             throw new IllegalArgumentException("relation already exists");
+        }
+    }
+    
+    private void validate(Person person) {
+        PeopleManagerImpl.validate(person);
+        if(person.getId() == null) {
+            throw new IllegalArgumentException("person id is null");
         }
     }
 }
