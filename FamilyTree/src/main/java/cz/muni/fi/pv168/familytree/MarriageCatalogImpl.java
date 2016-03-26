@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
 
@@ -63,6 +64,7 @@ public class MarriageCatalogImpl implements MarriageCatalog {
             throw new IllegalArgumentException("Marriage id is null.");
         }
         marriageSetTo(marriage);
+        
         try(
                 Connection connection = dataSource.getConnection();
                 PreparedStatement st = connection.prepareStatement(
@@ -122,22 +124,85 @@ public class MarriageCatalogImpl implements MarriageCatalog {
     
     @Override
     public Marriage findMarriageById(Long id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try(
+                Connection connection = dataSource.getConnection();
+                PreparedStatement st = connection.prepareStatement(
+                        "SELECT marriage_id,from,to,spouse1_id,spouse2_id "
+                                + "FROM MARRIAGES WHERE marriage_id = ?")) {
+            st.setLong(1, id);
+            
+            ResultSet rs = st.executeQuery();
+            if(rs.next()) {
+                Marriage marriage = resultSetToMarriage(rs);
+                if(rs.next()) {
+                    throw new ServiceFailureException(
+                            "Internal error: More entities with the same id found "
+                            + "(source id: " + id + ", found " + marriage + " and " + resultSetToMarriage(rs));
+                }
+                return marriage;
+            } else {
+                return null;
+            }
+        } catch(SQLException ex) {
+            throw new ServiceFailureException(
+                    "Error when retrieving marriage with id " + id, ex);
+        }
     }
 
     @Override
     public Marriage findCurrentMarriage(Person p) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<Marriage> marriages = findMarriagesOfPerson(p);
+        if(!marriages.isEmpty()) {
+            for (Marriage marriage : marriages) {
+                if(marriage.getTo() == null) {
+                    return marriage;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
     public List<Marriage> findMarriagesOfPerson(Person p) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        validate(p);
+        
+        try(
+                Connection connection = dataSource.getConnection();
+                PreparedStatement st = connection.prepareStatement(
+                        "SELECT marriage_id,from,to,spouse1_id,spouse2_id "
+                                + "FROM MARRIAGES WHERE spouse1_id = ? OR spouse2_id = ?")) {
+            st.setLong(1, p.getId());
+            st.setLong(2, p.getId());
+            
+            ResultSet rs = st.executeQuery();
+            List<Marriage> marriages = new ArrayList<>();
+            while (rs.next()) {
+                marriages.add(resultSetToMarriage(rs));
+            }
+            return marriages;
+        } catch(SQLException ex) {
+            throw new ServiceFailureException(
+                    "Error when retrieving marriages of " + p, ex);
+        }
     }
 
     @Override
     public List<Marriage> findAllMarriages() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try(
+                Connection connection = dataSource.getConnection();
+                PreparedStatement st = connection.prepareStatement(
+                        "SELECT marriage_id,from,to,spouse1_id,spouse2_id "
+                        + "FROM MARRIAGES")) {
+            ResultSet rs = st.executeQuery();
+            List<Marriage> marriages = new ArrayList<>();
+            while (rs.next()) {
+                marriages.add(resultSetToMarriage(rs));
+            }
+            return marriages;
+        } catch(SQLException ex) {
+            throw new ServiceFailureException(
+                    "Error when retrieving all marriages.", ex);
+        }
     }
 
     private void validate(Person person) {
@@ -214,5 +279,16 @@ public class MarriageCatalogImpl implements MarriageCatalog {
                         + marriage + " with " + marriage.getSpouse1() + " and " + marriage.getSpouse2()
                     + " - no key found");
         }
+    }
+
+    private Marriage resultSetToMarriage(ResultSet rs) throws SQLException {
+        Marriage marriage = new Marriage();
+        marriage.setId(rs.getLong("marriage_id"));
+        marriage.setFrom(rs.getDate("from").toLocalDate());
+        marriage.setTo(rs.getDate("to") != null ? rs.getDate("to").toLocalDate() : null);
+        PeopleManagerImpl manager = new PeopleManagerImpl(dataSource);
+        marriage.setSpouse1(manager.findPersonById(rs.getLong("spouse1_id")));
+        marriage.setSpouse2(manager.findPersonById(rs.getLong("spouse2_id")));
+        return marriage;
     }
 }

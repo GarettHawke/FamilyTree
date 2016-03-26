@@ -20,8 +20,7 @@ public class RelationCatalogImpl implements RelationCatalog {
 
     @Override
     public List<Person> findParents(Person p) {
-        List<Person> parents = new ArrayList<>();
-        PeopleManagerImpl.validate(p);
+        validate(p);
         
         try(
            Connection connection = dataSource.getConnection();
@@ -29,14 +28,13 @@ public class RelationCatalogImpl implements RelationCatalog {
                    "SELECT id,name,gender,birthDate,birthPlace,deathDate,deathPlace"
                    + " FROM RELATIONS, PEOPLE WHERE child_id = ? AND parent_id = id")) {
             st.setLong(1, p.getId());
-            ResultSet rs = st.executeQuery();
             
+            ResultSet rs = st.executeQuery();
+            List<Person> parents = new ArrayList<>();
             if (rs.next()) {
-                Person parent = PeopleManagerImpl.resultSetToPerson(rs);
-                parents.add(parent);
+                parents.add(PeopleManagerImpl.resultSetToPerson(rs));
                 if (rs.next()) {
-                    parent = PeopleManagerImpl.resultSetToPerson(rs);
-                    parents.add(parent);
+                    parents.add(PeopleManagerImpl.resultSetToPerson(rs));
                     if(rs.next())
                         throw new ServiceFailureException(
                                 "Internal error: More than 2 parents found for person " + p);
@@ -50,19 +48,19 @@ public class RelationCatalogImpl implements RelationCatalog {
 
     @Override
     public List<Person> findChildren(Person p) {
-        List<Person> children = new ArrayList<>();
-        PeopleManagerImpl.validate(p);
+        validate(p);
+        
         try(
             Connection connection = dataSource.getConnection();
             PreparedStatement st = connection.prepareStatement(
                     "SELECT id,name,gender,birthDate,birthPlace,deathDate,deathPlace"
                    + " FROM RELATIONS, PEOPLE WHERE parent_id = ? AND child_id = id")) {
             st.setLong(1, p.getId());
-            ResultSet rs = st.executeQuery();
             
+            ResultSet rs = st.executeQuery();
+            List<Person> children = new ArrayList<>();
             while(rs.next()) {
-                Person child = PeopleManagerImpl.resultSetToPerson(rs);
-                children.add(child);
+                children.add(PeopleManagerImpl.resultSetToPerson(rs));
             }
             return children;
         } catch (SQLException ex) {
@@ -75,6 +73,7 @@ public class RelationCatalogImpl implements RelationCatalog {
         validate(parent);
         validate(child);
         validate(parent, child);
+        
         try(
                 Connection connection = dataSource.getConnection();
                 PreparedStatement st = connection.prepareStatement(
@@ -96,6 +95,7 @@ public class RelationCatalogImpl implements RelationCatalog {
     public void deleteRelation(Person parent, Person child) {
         validate(parent);
         validate(child);
+        
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement st = connection.prepareStatement(
