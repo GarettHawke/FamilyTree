@@ -20,10 +20,10 @@ import static org.junit.Assert.*;
 
 public class PeopleManagerTest {
     
-    private enum Source {id, name, gender, placeOfBirth, dateOfBirth, placeOfDeath, dateOfDeath}
+    private enum Source {name, gender, placeOfBirth, dateOfBirth, placeOfDeath, dateOfDeath}
     private PeopleManager manager;
     private Person p0;
-    private Long id;
+    private long id;
     private final LocalDate date = LocalDate.now();
     private DataSource ds;
     
@@ -49,13 +49,6 @@ public class PeopleManagerTest {
         manager = new PeopleManagerImpl(ds);
         p0 = new Person("p0", GenderType.MAN, "p0Birth", date.minusYears(30), "p0Death", date);
     }
-
-    
-    /*@Before
-    public void setUp() throws SQLException {
-        manager = new PeopleManagerImpl(ds);
-        p0 = new Person("p0", GenderType.MAN, "p0Birth", date.minusYears(30), "p0Death", date);
-    }*/
     
     @After
     public void tearDown() throws SQLException {
@@ -204,7 +197,7 @@ public class PeopleManagerTest {
             manager.createPerson(p0);
             fail("Setting dateOfBirth after dateOfDeath didn't throw any exception");
         } catch (IllegalArgumentException e) {
-            p0.setDateOfBirth(date.minusDays(10));
+            //ok
         }
         
         try {
@@ -225,7 +218,7 @@ public class PeopleManagerTest {
         assertThat("Person birthPlace == null" + source, p0.getPlaceOfBirth(), is(not(equalTo(null))));
         assertThat("Person birthDay == null" + source, p0.getDateOfBirth(), is(not(equalTo(null))));
         
-        assertThat("Person id != \"Jhon Doe\"" + source, p0.getName(), is(equalTo("Jhon Doe")));
+        assertThat("Person name != \"Jhon Doe\"" + source, p0.getName(), is(equalTo("Jhon Doe")));
         assertThat("Person gender != GenderType.MAN" + source, p0.getGender(), is(equalTo(GenderType.MAN)));
         assertThat("Person placeOfBirth != \"Hospital\"" + source, p0.getPlaceOfBirth(), is(equalTo("Hospital")));
         assertThat("Person birthDay != date.minusDays(10)" + source, p0.getDateOfBirth(), is(equalTo(date.minusDays(10))));
@@ -234,14 +227,13 @@ public class PeopleManagerTest {
         
         if (source.equals("; Using Constructor()")) {
             p0 = new Person("Jhon Doe", GenderType.MAN, "Hospital", date.minusDays(10), "The same Hospital", date );
-            manager.createPerson(p0);
         } else {
             p0.setPlaceOfDeath("The same Hospital");
             p0.setDateOfDeath(date);
             p0.setId(null);
-            manager.createPerson(p0);
         }
         
+        manager.createPerson(p0);
         assertThat("Person placeOfDeath != \"The same Hospital\"" + source, p0.getPlaceOfDeath(), is(equalTo("The same Hospital")));
         assertThat("Person dateOfDeath != date" + source, p0.getDateOfDeath(), is(equalTo(date)));
         

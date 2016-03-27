@@ -32,7 +32,7 @@ public class MarriageCatalogImpl implements MarriageCatalog {
         try(
                 Connection connection = dataSource.getConnection();
                 PreparedStatement st = connection.prepareStatement(
-                    "INSERT INTO PEOPLE (from,to,spouse1_id,spouse2_id)"
+                    "INSERT INTO MARRIAGES (from,to,spouse1_id,spouse2_id)"
                             + " VALUES (?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS)) {
             st.setDate(1, Date.valueOf(marriage.getFrom()));
