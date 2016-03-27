@@ -44,10 +44,13 @@ public class MarriageCatalogTest {
             connection.prepareStatement(createTableMarriages).executeUpdate();
         }
         catalog = new MarriageCatalogImpl(ds);
+        PeopleManagerImpl manager = new PeopleManagerImpl(ds);
         sp1 = new Person("Jhon Doe", GenderType.MAN, "Hospital", date.minusYears(50), "The same hospital", date);
-        sp1.setId(1L);
+        //sp1.setId(1L);
         sp2 = new Person("Jane Doe", GenderType.WOMAN, "Different hospital", date.minusYears(50));
-        sp2.setId(2L);
+        //sp2.setId(2L);
+        manager.createPerson(sp1);
+        manager.createPerson(sp2);
         m = new Marriage(sp1, sp2, date.minusYears(20));
     }
     
@@ -90,7 +93,7 @@ public class MarriageCatalogTest {
         m.setFrom(date.minusYears(30));
         update(Source.from);
         
-        m.setFrom(date.minusYears(10));
+        m.setTo(date.minusYears(10));
         update(Source.to);
         
         m.setSpouse1(new Person("s3", GenderType.MAN, "s3Birth", date));

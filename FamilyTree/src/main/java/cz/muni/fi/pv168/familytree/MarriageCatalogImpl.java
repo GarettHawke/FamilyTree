@@ -32,7 +32,7 @@ public class MarriageCatalogImpl implements MarriageCatalog {
         try(
                 Connection connection = dataSource.getConnection();
                 PreparedStatement st = connection.prepareStatement(
-                    "INSERT INTO MARRIAGES (from,to,spouse1_id,spouse2_id)"
+                    "INSERT INTO MARRIAGES (m_from,m_to,spouse1_id,spouse2_id)"
                             + " VALUES (?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS)) {
             st.setDate(1, Date.valueOf(marriage.getFrom()));
@@ -68,7 +68,7 @@ public class MarriageCatalogImpl implements MarriageCatalog {
         try(
                 Connection connection = dataSource.getConnection();
                 PreparedStatement st = connection.prepareStatement(
-                        "UPDATE MARRIAGES SET from = ?, to = ?, spouse1_id = ?, "
+                        "UPDATE MARRIAGES SET m_from = ?, m_to = ?, spouse1_id = ?, "
                         + "spouse2_id = ? WHERE marriage_id = ?")) {
             st.setDate(1, Date.valueOf(marriage.getFrom()));
             if(marriage.getTo() != null)
@@ -127,7 +127,7 @@ public class MarriageCatalogImpl implements MarriageCatalog {
         try(
                 Connection connection = dataSource.getConnection();
                 PreparedStatement st = connection.prepareStatement(
-                        "SELECT marriage_id,from,to,spouse1_id,spouse2_id "
+                        "SELECT marriage_id,m_from,m_to,spouse1_id,spouse2_id "
                                 + "FROM MARRIAGES WHERE marriage_id = ?")) {
             st.setLong(1, id);
             
@@ -169,7 +169,7 @@ public class MarriageCatalogImpl implements MarriageCatalog {
         try(
                 Connection connection = dataSource.getConnection();
                 PreparedStatement st = connection.prepareStatement(
-                        "SELECT marriage_id,from,to,spouse1_id,spouse2_id "
+                        "SELECT marriage_id,m_from,m_to,spouse1_id,spouse2_id "
                                 + "FROM MARRIAGES WHERE spouse1_id = ? OR spouse2_id = ?")) {
             st.setLong(1, p.getId());
             st.setLong(2, p.getId());
@@ -191,7 +191,7 @@ public class MarriageCatalogImpl implements MarriageCatalog {
         try(
                 Connection connection = dataSource.getConnection();
                 PreparedStatement st = connection.prepareStatement(
-                        "SELECT marriage_id,from,to,spouse1_id,spouse2_id "
+                        "SELECT marriage_id,m_from,m_to,spouse1_id,spouse2_id "
                         + "FROM MARRIAGES")) {
             ResultSet rs = st.executeQuery();
             List<Marriage> marriages = new ArrayList<>();
@@ -284,8 +284,8 @@ public class MarriageCatalogImpl implements MarriageCatalog {
     private Marriage resultSetToMarriage(ResultSet rs) throws SQLException {
         Marriage marriage = new Marriage();
         marriage.setId(rs.getLong("marriage_id"));
-        marriage.setFrom(rs.getDate("from").toLocalDate());
-        marriage.setTo(rs.getDate("to") != null ? rs.getDate("to").toLocalDate() : null);
+        marriage.setFrom(rs.getDate("m_from").toLocalDate());
+        marriage.setTo(rs.getDate("m_to") != null ? rs.getDate("m_to").toLocalDate() : null);
         PeopleManagerImpl manager = new PeopleManagerImpl(dataSource);
         marriage.setSpouse1(manager.findPersonById(rs.getLong("spouse1_id")));
         marriage.setSpouse2(manager.findPersonById(rs.getLong("spouse2_id")));
