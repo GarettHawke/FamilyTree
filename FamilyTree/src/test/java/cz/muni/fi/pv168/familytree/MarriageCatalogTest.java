@@ -105,6 +105,30 @@ public class MarriageCatalogTest {
         update(Source.spouse2);
         
         assertThat("m2 was changed while changing m", catalog.findMarriageById(m2.getId()), is(equalTo(m2)));
+        
+        try {
+            m2.setSpouse1(null);
+            catalog.updateMarriage(m2);
+            fail("Should reject marriage with null Person");
+        } catch (IllegalArgumentException e) {
+            m2.setSpouse1(new Person("Jhon Doe", GenderType.MAN, "Hospital", date.minusYears(50), "The same hospital", date));
+        }
+        
+        try {
+            m2.setSpouse1(new Person());
+            catalog.updateMarriage(m2);
+            fail("Should reject marriage with illegal Person");
+        } catch (IllegalArgumentException e) {
+            m2.setSpouse1(new Person("Jhon Doe", GenderType.MAN, "Hospital", date.minusYears(50), "The same hospital", date));
+        }
+        
+        try {
+            m2.setSpouse1(new Person("Carl", GenderType.MAN, "carlBirth", date, "CarlDeath", date.minusDays(1)));
+            catalog.updateMarriage(m2);
+            fail("Should reject marriage with illegal Person");
+        } catch (IllegalArgumentException e) {
+            m2.setSpouse1(new Person("Jhon Doe", GenderType.MAN, "Hospital", date.minusYears(50), "The same hospital", date));
+        }
     }
     
     private void update(Source source) {
@@ -261,6 +285,31 @@ public class MarriageCatalogTest {
             fail("To can be set before from");
         } catch (IllegalArgumentException e) {
             //ok
+        }
+        
+        m = new Marriage(sp1, sp2, date.minusYears(20));
+        try {
+            m.setSpouse1(null);
+            catalog.createMarriage(m);
+            fail("Should reject marriage with null Person");
+        } catch (IllegalArgumentException e) {
+            m.setSpouse1(new Person("Jhon Doe", GenderType.MAN, "Hospital", date.minusYears(50), "The same hospital", date));
+        }
+        
+        try {
+            m.setSpouse1(new Person());
+            catalog.createMarriage(m);
+            fail("Should reject marriage with illegal Person");
+        } catch (IllegalArgumentException e) {
+            m.setSpouse1(new Person("Jhon Doe", GenderType.MAN, "Hospital", date.minusYears(50), "The same hospital", date));
+        }
+        
+        try {
+            m.setSpouse1(new Person("Carl", GenderType.MAN, "carlBirth", date, "CarlDeath", date.minusDays(1)));
+            catalog.createMarriage(m);
+            fail("Should reject marriage with illegal Person");
+        } catch (IllegalArgumentException e) {
+            m.setSpouse1(new Person("Jhon Doe", GenderType.MAN, "Hospital", date.minusYears(50), "The same hospital", date));
         }
     }
     
