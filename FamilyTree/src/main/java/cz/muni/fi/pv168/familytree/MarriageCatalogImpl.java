@@ -152,11 +152,9 @@ public class MarriageCatalogImpl implements MarriageCatalog {
     @Override
     public Marriage findCurrentMarriage(Person p) {
         List<Marriage> marriages = findMarriagesOfPerson(p);
-        if(!marriages.isEmpty()) {
-            for (Marriage marriage : marriages) {
-                if(marriage.getTo() == null) {
-                    return marriage;
-                }
+        for (Marriage marriage : marriages) {
+            if(marriage.getTo() == null) {
+                return marriage;
             }
         }
         return null;
@@ -241,6 +239,10 @@ public class MarriageCatalogImpl implements MarriageCatalog {
                 && marriage.getSpouse2().getDateOfDeath().isBefore(marriage.getFrom())) {
             throw new IllegalArgumentException("Spouse2 is dead.");
         }
+        
+        if(marriage.getTo() != null && marriage.getTo().isBefore(marriage.getFrom())) {
+            throw new IllegalArgumentException("Marriage has to start before it can end");
+        }
     }
 
     private void marriageSetTo(Marriage marriage) {
@@ -250,9 +252,7 @@ public class MarriageCatalogImpl implements MarriageCatalog {
                 to = marriage.getSpouse2().getDateOfDeath();
             }
         }
-        if(to != null &&
-                ((marriage.getTo() == null)
-                || (marriage.getTo() != null && marriage.getTo().isAfter(to)))) {
+        if(to != null && marriage.getTo() != null && marriage.getTo().isAfter(to)) {
             marriage.setTo(to);
         }
     }

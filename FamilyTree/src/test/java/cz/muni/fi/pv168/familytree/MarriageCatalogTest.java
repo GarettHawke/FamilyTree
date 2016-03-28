@@ -25,6 +25,7 @@ public class MarriageCatalogTest {
     private Person sp1, sp2;
     private final LocalDate date = LocalDate.now();
     private MarriageCatalog catalog;
+    private PeopleManagerImpl manager;
     private DataSource ds;
     private long id;
     
@@ -44,11 +45,9 @@ public class MarriageCatalogTest {
             connection.prepareStatement(createTableMarriages).executeUpdate();
         }
         catalog = new MarriageCatalogImpl(ds);
-        PeopleManagerImpl manager = new PeopleManagerImpl(ds);
+        manager = new PeopleManagerImpl(ds);
         sp1 = new Person("Jhon Doe", GenderType.MAN, "Hospital", date.minusYears(50), "The same hospital", date);
-        //sp1.setId(1L);
         sp2 = new Person("Jane Doe", GenderType.WOMAN, "Different hospital", date.minusYears(50));
-        //sp2.setId(2L);
         manager.createPerson(sp1);
         manager.createPerson(sp2);
         m = new Marriage(sp1, sp2, date.minusYears(20));
@@ -96,10 +95,13 @@ public class MarriageCatalogTest {
         m.setTo(date.minusYears(10));
         update(Source.to);
         
-        m.setSpouse1(new Person("s3", GenderType.MAN, "s3Birth", date));
+        Person sp3 = new Person("s3", GenderType.MAN, "s3Birth", date.minusYears(45));
+        manager.createPerson(sp3);
+        
+        m.setSpouse1(sp3);
         update(Source.spouse1);
         
-        m.setSpouse2(new Person("s3", GenderType.MAN, "s3Birth", date));
+        m.setSpouse2(sp3);
         update(Source.spouse2);
         
         assertThat("m2 was changed while changing m", catalog.findMarriageById(m2.getId()), is(equalTo(m2)));
@@ -164,12 +166,25 @@ public class MarriageCatalogTest {
     
     @Test
     public void findCurrent() {
-        throw new UnsupportedOperationException("Not supported yet");
+        System.out.println("here: v");
+        catalog.createMarriage(m);
+        Marriage m2 = new Marriage(sp1, sp2, date.minusYears(30), date.minusYears(25));
+        catalog.createMarriage(m2);
+        Marriage findCurrentMarriage = catalog.findCurrentMarriage(sp1);
+        assertThat("The current marriage of a person was not returned", findCurrentMarriage, is(equalTo(m)));
     }
     
     @Test
     public void findMarriagesOfPerson() {
-        throw new UnsupportedOperationException("Not supported yet");
+        catalog.createMarriage(m);
+        Marriage m2 = new Marriage(sp1, sp2, date.minusYears(30), date.minusYears(25));
+        catalog.createMarriage(m2);
+        List<Marriage> otherList = new ArrayList<>();
+        otherList.add(m);
+        otherList.add(m2);
+        List<Marriage> findAllMarriages = catalog.findAllMarriages();
+        assertThat("The list of all marraiges was not returned", 
+                findAllMarriages.containsAll(otherList), is(equalTo(otherList.containsAll(findAllMarriages))));
     }
     
     @Test
@@ -177,6 +192,7 @@ public class MarriageCatalogTest {
         getters("; Using Construstor()");
         try {
             m = new Marriage(sp1, sp1, date.minusYears(20));
+            catalog.createMarriage(m);
             fail("Spouse 1 and 2 can be set to same Person using constructor");
         } catch (IllegalArgumentException e) {
             //ok
@@ -184,6 +200,7 @@ public class MarriageCatalogTest {
         
         try {
             m = new Marriage(sp1, sp2, date, date.minusYears(20));
+            catalog.createMarriage(m);
             fail("Constructing Marriage with \"from\" after \"to\" didn't throw any exception");
         } catch (IllegalArgumentException e) {
             //ok
@@ -191,6 +208,7 @@ public class MarriageCatalogTest {
         
         try {
             m = new Marriage(new Person(), sp2, date, date.minusYears(20));
+            catalog.createMarriage(m);
             fail("Constructing Marriage with empty spouse1 didn't throw any exception");
         } catch (IllegalArgumentException e) {
             //ok
@@ -198,6 +216,7 @@ public class MarriageCatalogTest {
         
         try {
             m = new Marriage(sp1, new Person(), date, date.minusYears(20));
+            catalog.createMarriage(m);
             fail("Constructing Marriage with empty spouse2 didn't throw any exception");
         } catch (IllegalArgumentException e) {
             //ok
@@ -214,6 +233,7 @@ public class MarriageCatalogTest {
         
         try {
             m.setSpouse1(sp2);
+            catalog.createMarriage(m);
             fail("Spouse1 can be set to spouse2");
         } catch (IllegalArgumentException e) {
             //ok
@@ -221,6 +241,7 @@ public class MarriageCatalogTest {
         
         try {
             m.setSpouse2(sp1);
+            catalog.createMarriage(m);
             fail("Spouse2 can be set to spouse1");
         } catch (IllegalArgumentException e) {
             //ok
@@ -228,6 +249,7 @@ public class MarriageCatalogTest {
         
         try {
             m.setFrom(m.getTo().plusDays(1));
+            catalog.createMarriage(m);
             fail("From can be set after to");
         } catch (IllegalArgumentException e) {
             //ok
@@ -235,6 +257,7 @@ public class MarriageCatalogTest {
         
         try {
             m.setTo(m.getFrom().minusDays(1));
+            catalog.createMarriage(m);
             fail("To can be set before from");
         } catch (IllegalArgumentException e) {
             //ok
@@ -252,7 +275,6 @@ public class MarriageCatalogTest {
         assertThat("Marriage spouse1 != sp1" + source, m.getSpouse1(), is(equalTo(sp1)));
         assertThat("Marriage spouse2 != sp2" + source, m.getSpouse2(), is(equalTo(sp2)));
         assertThat("Marriage from != date.minusYears(20)" + source, m.getFrom(), is(equalTo(date.minusYears(20))));
-        assertThat("Marriage dateTo != null" + source, m.getTo(), is(equalTo(null)));
         
         if (source.equals("; Using Constructor()")) {
             m = new Marriage(sp1, sp2, date.minusYears(20), date);

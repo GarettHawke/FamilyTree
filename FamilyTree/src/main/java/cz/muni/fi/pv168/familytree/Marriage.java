@@ -85,4 +85,13 @@ public class Marriage {
         final Marriage other = (Marriage) obj;
         return Objects.equals(this.id, other.id);
     }
+
+    @Override
+    public String toString() {
+        return "Marriage{" + "id=" + id + 
+                ", from=" + from + 
+                ", to=" + to + 
+                ", spouse1=" + spouse1 + 
+                ", spouse2=" + spouse2 + '}';
+    }
 }
