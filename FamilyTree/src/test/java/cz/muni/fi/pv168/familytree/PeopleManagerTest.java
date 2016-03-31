@@ -238,4 +238,41 @@ public class PeopleManagerTest {
         assertThat("Person dateOfDeath != date" + source, p0.getDateOfDeath(), is(equalTo(date)));
         
     }
+    
+    @Test
+    public void deletePerson() {
+
+        Person p1 = new Person("Thomas Lee", GenderType.MAN, "p1Place", date.minusYears(30));
+        
+        manager.createPerson(p0);
+        manager.createPerson(p1);
+
+        assertNotNull(manager.findPersonById(p0.getId()));
+        assertNotNull(manager.findPersonById(p1.getId()));
+
+        manager.deletePerson(p0);
+
+        assertNull(manager.findPersonById(p0.getId()));
+        assertNotNull(manager.findPersonById(p1.getId()));
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void deleteNullPerson() {
+        manager.deletePerson(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void deletePersonWithNullId() {
+        Person p = new Person("Thomas Lee", GenderType.MAN, "p1Place", date.minusYears(30));
+        p.setId(null);
+        manager.deletePerson(p);
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void deletePersonWithNonExistingId() {
+        Person p = new Person("Thomas Lee", GenderType.MAN, "p1Place", date.minusYears(30));
+        p.setId(1L);
+        manager.deletePerson(p);
+    }
 }

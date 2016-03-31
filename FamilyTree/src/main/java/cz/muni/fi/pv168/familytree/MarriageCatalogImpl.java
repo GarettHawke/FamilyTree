@@ -27,7 +27,7 @@ public class MarriageCatalogImpl implements MarriageCatalog {
         if(marriage.getId() != null) {
             throw new IllegalArgumentException("Marriage id is already set.");
         }
-        marriageSetTo(marriage);
+        //marriageSetTo(marriage);
         
         try(
                 Connection connection = dataSource.getConnection();
@@ -63,7 +63,7 @@ public class MarriageCatalogImpl implements MarriageCatalog {
         if(marriage.getId() == null) {
             throw new IllegalArgumentException("Marriage id is null.");
         }
-        marriageSetTo(marriage);
+        //marriageSetTo(marriage);
         
         try(
                 Connection connection = dataSource.getConnection();
@@ -252,7 +252,9 @@ public class MarriageCatalogImpl implements MarriageCatalog {
                 to = marriage.getSpouse2().getDateOfDeath();
             }
         }
-        if(to != null && marriage.getTo() != null && marriage.getTo().isAfter(to)) {
+        if(to != null &&
+                  ((marriage.getTo() == null)
+                  || (marriage.getTo() != null && marriage.getTo().isAfter(to)))) {
             marriage.setTo(to);
         }
     }

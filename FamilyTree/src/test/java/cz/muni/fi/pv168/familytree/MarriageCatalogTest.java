@@ -190,7 +190,7 @@ public class MarriageCatalogTest {
     
     @Test
     public void findCurrent() {
-        System.out.println("here: v");
+        //System.out.println("here: v");
         catalog.createMarriage(m);
         Marriage m2 = new Marriage(sp1, sp2, date.minusYears(30), date.minusYears(25));
         catalog.createMarriage(m2);
@@ -336,4 +336,40 @@ public class MarriageCatalogTest {
         assertThat("Marriage dateTo != date" + source, m.getTo(), is(equalTo(date)));
     }
     
+    @Test
+    public void deleteMarriage() {
+        Person p1 = new Person("Thomas Lee", GenderType.MAN, "p1Place", date.minusYears(30));
+        Person p2 = new Person("Jane Lee", GenderType.WOMAN, "p2Place", date.minusYears(30));
+        manager.createPerson(p1);
+        manager.createPerson(p2);
+        
+        Marriage m2 = new Marriage(p1, p2, date.minusYears(5));
+        catalog.createMarriage(m);
+        catalog.createMarriage(m2);
+        
+        assertNotNull(catalog.findMarriageById(m.getId()));
+        assertNotNull(catalog.findMarriageById(m2.getId()));
+
+        catalog.deleteMarriage(m2);
+
+        assertNotNull(catalog.findMarriageById(m.getId()));
+        assertNull(catalog.findMarriageById(m2.getId()));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void deleteNullPerson() {
+        catalog.deleteMarriage(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void deletePersonWithNullId() {
+        m.setId(null);
+        catalog.deleteMarriage(m);
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void deletePersonWithNonExistingId() {
+        m.setId(1L);
+        catalog.deleteMarriage(m);
+    }
 }
