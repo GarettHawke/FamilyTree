@@ -13,9 +13,15 @@ public class RelationCatalogImpl implements RelationCatalog {
     
     private static final long ACCEPTED_AGE_FOR_PARENTS = 5;
     private final DataSource dataSource;
+    private PeopleManager manager;
     
     public RelationCatalogImpl(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+    
+    @Override
+    public void setPeopleManager(PeopleManager manager) {
+        this.manager = manager;
     }
 
     @Override
@@ -25,16 +31,15 @@ public class RelationCatalogImpl implements RelationCatalog {
         try(
            Connection connection = dataSource.getConnection();
            PreparedStatement st = connection.prepareStatement(
-                   "SELECT id,name,gender,birthDate,birthPlace,deathDate,deathPlace"
-                   + " FROM RELATIONS, PEOPLE WHERE child_id = ? AND parent_id = id")) {
+                   "SELECT parent_id FROM RELATIONS WHERE child_id = ?")) {
             st.setLong(1, p.getId());
             
             ResultSet rs = st.executeQuery();
             List<Person> parents = new ArrayList<>();
             if (rs.next()) {
-                parents.add(PeopleManagerImpl.resultSetToPerson(rs));
+                parents.add(manager.findPersonById(rs.getLong("parent_id")));
                 if (rs.next()) {
-                    parents.add(PeopleManagerImpl.resultSetToPerson(rs));
+                    parents.add(manager.findPersonById(rs.getLong("parent_id")));
                     if(rs.next())
                         throw new ServiceFailureException(
                                 "Internal error: More than 2 parents found for person " + p);
@@ -53,14 +58,13 @@ public class RelationCatalogImpl implements RelationCatalog {
         try(
             Connection connection = dataSource.getConnection();
             PreparedStatement st = connection.prepareStatement(
-                    "SELECT id,name,gender,birthDate,birthPlace,deathDate,deathPlace"
-                   + " FROM RELATIONS, PEOPLE WHERE parent_id = ? AND child_id = id")) {
+                    "SELECT child_id FROM RELATIONS WHERE parent_id = ?")) {
             st.setLong(1, p.getId());
             
             ResultSet rs = st.executeQuery();
             List<Person> children = new ArrayList<>();
             while(rs.next()) {
-                children.add(PeopleManagerImpl.resultSetToPerson(rs));
+                children.add(manager.findPersonById(rs.getLong("child_id")));
             }
             return children;
         } catch (SQLException ex) {

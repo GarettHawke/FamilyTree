@@ -21,7 +21,8 @@ import static org.junit.Assert.*;
  */
 public class RelationCatalogImplTest {
     
-    private RelationCatalogImpl manager;
+    private RelationCatalog manager;
+    private PeopleManager mngr;
     private DataSource ds;
     
     private final Person person1;
@@ -57,7 +58,7 @@ public class RelationCatalogImplTest {
         try (Connection connection = ds.getConnection()) {
             connection.prepareStatement(createTablePeople).executeUpdate();
         }
-        PeopleManagerImpl mngr = new PeopleManagerImpl(ds);
+        mngr = new PeopleManagerImpl(ds);
         mngr.createPerson(person1);
         mngr.createPerson(person2);
         mngr.createPerson(person3);
@@ -68,6 +69,7 @@ public class RelationCatalogImplTest {
             connection.prepareStatement(createTableRelations).executeUpdate();
         }
         manager = new RelationCatalogImpl(ds);
+        manager.setPeopleManager(mngr);
     }
     
     @After

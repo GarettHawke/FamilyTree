@@ -16,4 +16,5 @@ public interface RelationCatalog {
     
     void deleteRelation(Person parent, Person child);
     
+    public void setPeopleManager(PeopleManager manager);
 }

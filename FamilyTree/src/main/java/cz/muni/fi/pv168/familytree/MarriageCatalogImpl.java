@@ -16,6 +16,12 @@ public class MarriageCatalogImpl implements MarriageCatalog {
     
     private static final long ACCEPTED_AGE_FOR_MARRIAGE = 16;
     private final DataSource dataSource;
+    private PeopleManager manager;
+    
+    @Override
+    public void setPeopleManager(PeopleManager manager) {
+        this.manager = manager;
+    }
     
     public MarriageCatalogImpl(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -288,7 +294,6 @@ public class MarriageCatalogImpl implements MarriageCatalog {
         marriage.setId(rs.getLong("marriage_id"));
         marriage.setFrom(rs.getDate("m_from").toLocalDate());
         marriage.setTo(rs.getDate("m_to") != null ? rs.getDate("m_to").toLocalDate() : null);
-        PeopleManagerImpl manager = new PeopleManagerImpl(dataSource);
         marriage.setSpouse1(manager.findPersonById(rs.getLong("spouse1_id")));
         marriage.setSpouse2(manager.findPersonById(rs.getLong("spouse2_id")));
         return marriage;

@@ -25,7 +25,7 @@ public class MarriageCatalogTest {
     private Person sp1, sp2;
     private final LocalDate date = LocalDate.now();
     private MarriageCatalog catalog;
-    private PeopleManagerImpl manager;
+    private PeopleManager manager;
     private DataSource ds;
     private long id;
     
@@ -46,6 +46,7 @@ public class MarriageCatalogTest {
         }
         catalog = new MarriageCatalogImpl(ds);
         manager = new PeopleManagerImpl(ds);
+        catalog.setPeopleManager(manager);
         sp1 = new Person("Jhon Doe", GenderType.MAN, "Hospital", date.minusYears(50), "The same hospital", date);
         sp2 = new Person("Jane Doe", GenderType.WOMAN, "Different hospital", date.minusYears(50));
         manager.createPerson(sp1);
@@ -357,18 +358,18 @@ public class MarriageCatalogTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void deleteNullPerson() {
+    public void deleteNullMarriage() {
         catalog.deleteMarriage(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void deletePersonWithNullId() {
+    public void deleteMarriageWithNullId() {
         m.setId(null);
         catalog.deleteMarriage(m);
     }
 
     @Test(expected = EntityNotFoundException.class)
-    public void deletePersonWithNonExistingId() {
+    public void deleteMarriageWithNonExistingId() {
         m.setId(1L);
         catalog.deleteMarriage(m);
     }

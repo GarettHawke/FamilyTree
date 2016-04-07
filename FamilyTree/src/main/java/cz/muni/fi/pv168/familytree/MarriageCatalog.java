@@ -21,4 +21,6 @@ public interface MarriageCatalog {
     List<Marriage> findMarriagesOfPerson(Person p);
     
     List<Marriage> findAllMarriages();
+    
+    void setPeopleManager(PeopleManager manager);
 }
