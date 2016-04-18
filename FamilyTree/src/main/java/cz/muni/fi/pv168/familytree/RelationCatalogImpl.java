@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.sql.DataSource;
 
 
@@ -69,6 +71,33 @@ public class RelationCatalogImpl implements RelationCatalog {
             return children;
         } catch (SQLException ex) {
             throw new ServiceFailureException("Error when getting children of " + p, ex);
+        }
+    }
+    
+    @Override
+    public Map<Person, List<Person>> findAllRelation() {
+        
+        
+        try (
+            Connection connection = dataSource.getConnection();
+            PreparedStatement st = connection.prepareStatement(
+                    "SELECT parent_id, child_id FROM RELATIONS")) {
+
+            ResultSet rs = st.executeQuery();
+
+            HashMap<Person, List<Person>> relations = new HashMap<>();
+            while (rs.next()) {
+                Person parent = manager.findPersonById(rs.getLong("parent_id"));
+                if(!relations.containsKey(parent)) {
+                    relations.put(parent, new ArrayList<>());
+                }
+                relations.getOrDefault(parent, null).add(manager.findPersonById(rs.getLong("child_id")));
+            }
+            
+            return relations;
+        } catch (SQLException ex) {
+            throw new ServiceFailureException(
+                    "Error when retrieving all People", ex);
         }
     }
 
