@@ -45,6 +45,11 @@
         <c:out value="${chyba}"/>
     </div>
 </c:if>
+<c:if test="${not empty error}">
+    <div>
+        <c:out value="${error}"/>
+    </div>
+</c:if>
 <form action="${pageContext.request.contextPath}/people/add" method="post">
     <table>
         <tr>

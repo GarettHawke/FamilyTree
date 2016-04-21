@@ -48,6 +48,9 @@ public class PeopleServlet extends HttpServlet {
                     getPeopleManager().createPerson(person);
                     response.sendRedirect(request.getContextPath()+URL_MAPPING);
                     return;
+                } catch (IllegalArgumentException e) {
+                    request.setAttribute("error", e.getMessage());
+                    showPeopleList(request, response);
                 } catch (ServiceFailureException e) {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
                     return;
@@ -86,6 +89,9 @@ public class PeopleServlet extends HttpServlet {
                     getPeopleManager().updatePerson(person);
                     response.sendRedirect(request.getContextPath()+URL_MAPPING);
                     return;
+                } catch (IllegalArgumentException e) {
+                    request.setAttribute("error", e.getMessage());
+                    showPersonUpdate(request, response);
                 } catch (ServiceFailureException e) {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
                     return;
