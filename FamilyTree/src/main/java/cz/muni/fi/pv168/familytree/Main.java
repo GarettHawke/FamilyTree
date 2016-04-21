@@ -1,11 +1,10 @@
 package cz.muni.fi.pv168.familytree;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
@@ -18,13 +17,12 @@ public class Main {
         ds.setDatabaseName("memory:familyTreeDB");
         ds.setCreateDatabase("create");
         
-        String path = "E:\\Programming\\FamilyTree\\FamilyTree\\";
-        String createTablePeople = String.join("", Files.readAllLines(Paths.get(path, "SQL-createTablePeople.sql")));
-        String insertPeople = String.join("", Files.readAllLines(Paths.get(path, "SQL-insertPeople.sql")));
-        String createTableMarriages = String.join("", Files.readAllLines(Paths.get(path, "SQL-createTableMarriages.sql")));
-        String insertMarriages = String.join("", Files.readAllLines(Paths.get(path, "SQL-insertMarriages.sql")));
-        String createTableRelations = String.join("", Files.readAllLines(Paths.get(path, "SQL-createTableRelations.sql")));
-        String insertRelations = String.join("", Files.readAllLines(Paths.get(path, "SQL-insertRelations.sql")));
+        String createTablePeople = getContentFileJar("SQL-createTablePeople.sql");
+        String insertPeople = getContentFileJar("SQL-insertPeople.sql");
+        String createTableMarriages = getContentFileJar("SQL-createTableMarriages.sql");
+        String insertMarriages = getContentFileJar("SQL-insertMarriages.sql");
+        String createTableRelations = getContentFileJar("SQL-createTableRelations.sql");
+        String insertRelations = getContentFileJar("SQL-insertRelations.sql");
         
         try (Connection connection = ds.getConnection()) {
             connection.prepareStatement(createTablePeople).executeUpdate();
@@ -36,6 +34,20 @@ public class Main {
         }
         
         return ds;
+    }
+    
+    public static String getContentFileJar(String filename) {
+        StringBuilder sb = new StringBuilder();
+        try(BufferedReader br = new BufferedReader(new InputStreamReader(Main.class.getResourceAsStream("/" + filename), "utf-8"))) {
+            String line = br.readLine();
+            while(line != null) {
+                sb.append(line);
+                line = br.readLine();
+            }
+        } catch (IOException ex) {
+            return "";
+        }
+        return sb.toString();
     }
 
     public static void main(String[] args) throws SQLException, IOException {

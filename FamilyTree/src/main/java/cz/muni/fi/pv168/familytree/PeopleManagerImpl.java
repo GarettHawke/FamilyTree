@@ -115,7 +115,10 @@ public class PeopleManagerImpl implements PeopleManager {
             st.setString(2, p.getGender().toString());
             st.setDate(3, java.sql.Date.valueOf(p.getDateOfBirth()));
             st.setString(4, p.getPlaceOfBirth());
-            st.setDate(5, java.sql.Date.valueOf(p.getDateOfDeath()));
+            if(p.getDateOfDeath() != null)
+                st.setDate(5, java.sql.Date.valueOf(p.getDateOfDeath()));
+            else
+                st.setDate(5, null);
             st.setString(6, p.getPlaceOfDeath());
             st.setLong(7, p.getId());
             
