@@ -97,7 +97,7 @@ public class PeopleManagerTest {
         
         p0.setName("");
         try{
-            manager.createPerson(p0);
+            manager.updatePerson(p0);
             fail("Should reject empty name");
         } catch (IllegalArgumentException e) {
             p0.setName("Jhon Doe");
@@ -105,7 +105,7 @@ public class PeopleManagerTest {
         
         p0.setPlaceOfBirth("");
         try{
-            manager.createPerson(p0);
+            manager.updatePerson(p0);
             fail("Should reject empty placeOfBirth");
         } catch (IllegalArgumentException e) {
             p0.setPlaceOfBirth("p0Birth");
@@ -113,7 +113,7 @@ public class PeopleManagerTest {
         
         p0.setPlaceOfDeath("");
         try{
-            manager.createPerson(p0);
+            manager.updatePerson(p0);
             fail("Should reject empty placeOfDeath");
         } catch (IllegalArgumentException e) {
             p0.setPlaceOfBirth("p0Death");
@@ -121,7 +121,7 @@ public class PeopleManagerTest {
         
         p0.setDateOfDeath(null);
         try{
-            manager.createPerson(p0);
+            manager.updatePerson(p0);
             fail("Both Death parameters should be set");
         } catch (IllegalArgumentException e) {
             p0.setDateOfDeath(date);
@@ -129,7 +129,7 @@ public class PeopleManagerTest {
         
         p0.setPlaceOfDeath(null);
         try{
-            manager.createPerson(p0);
+            manager.updatePerson(p0);
             fail("Both Death parameters should be set");
         } catch (IllegalArgumentException e) {
             p0.setPlaceOfBirth("p0Death");
