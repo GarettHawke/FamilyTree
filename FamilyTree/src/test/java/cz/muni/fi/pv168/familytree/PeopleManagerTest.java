@@ -95,6 +95,46 @@ public class PeopleManagerTest {
         p0.setDateOfDeath(date.minusDays(1));
         update(Source.dateOfDeath);
         
+        p0.setName("");
+        try{
+            manager.createPerson(p0);
+            fail("Should reject empty name");
+        } catch (IllegalArgumentException e) {
+            p0.setName("Jhon Doe");
+        }
+        
+        p0.setPlaceOfBirth("");
+        try{
+            manager.createPerson(p0);
+            fail("Should reject empty placeOfBirth");
+        } catch (IllegalArgumentException e) {
+            p0.setPlaceOfBirth("p0Birth");
+        }
+        
+        p0.setPlaceOfDeath("");
+        try{
+            manager.createPerson(p0);
+            fail("Should reject empty placeOfDeath");
+        } catch (IllegalArgumentException e) {
+            p0.setPlaceOfBirth("p0Death");
+        }
+        
+        p0.setDateOfDeath(null);
+        try{
+            manager.createPerson(p0);
+            fail("Both Death parameters should be set");
+        } catch (IllegalArgumentException e) {
+            p0.setDateOfDeath(date);
+        }
+        
+        p0.setPlaceOfDeath(null);
+        try{
+            manager.createPerson(p0);
+            fail("Both Death parameters should be set");
+        } catch (IllegalArgumentException e) {
+            p0.setPlaceOfBirth("p0Death");
+        }
+        
         assertThat("p1 was changed while changing p0", manager.findPersonById(p1.getId()), is(equalTo(p1)));
     }
     
@@ -180,6 +220,45 @@ public class PeopleManagerTest {
         } catch (IllegalArgumentException e) {
             //ok
         }
+        p0 = new Person("", GenderType.MAN, "Hospital", date, "The same Hospital", date.minusDays(10));
+        try{
+            manager.createPerson(p0);
+            fail("Should reject empty name");
+        } catch (IllegalArgumentException e) {
+            //ok
+        }
+        
+        p0 = new Person("Jhon Doe", GenderType.MAN, "", date, "The same Hospital", date.minusDays(10));
+        try{
+            manager.createPerson(p0);
+            fail("Should reject empty placeOfBirth");
+        } catch (IllegalArgumentException e) {
+            //ok
+        }
+        
+        p0 = new Person("Jhon Doe", GenderType.MAN, "Hospital", date, "", date.minusDays(10));
+        try{
+            manager.createPerson(p0);
+            fail("Should reject empty placeOfDeath");
+        } catch (IllegalArgumentException e) {
+            //ok
+        }
+        
+        p0 = new Person("Jhon Doe", GenderType.MAN, "Hospital", date, "The same Hospital", null);
+        try{
+            manager.createPerson(p0);
+            fail("Both or none Death parameters should be set");
+        } catch (IllegalArgumentException e) {
+            //ok
+        }
+        
+        p0 = new Person("Jhon Doe", GenderType.MAN, "Hospital", date, null, date.minusDays(10));
+        try{
+            manager.createPerson(p0);
+            fail("Both or none Death parameters should be set");
+        } catch (IllegalArgumentException e) {
+            //ok
+        }
     }
     
     @Test
@@ -206,7 +285,53 @@ public class PeopleManagerTest {
             manager.createPerson(p0);
             fail("Setting dateOfDeath before dateOfBirth didn't throw any exception");
         } catch (IllegalArgumentException e) {
-            //ok
+            p0.setDateOfBirth(date.minusDays(10));
+            p0.setDateOfDeath(date);
+        }
+        
+        try {
+            p0.setName("");
+            p0.setId(null);
+            manager.createPerson(p0);
+            fail("Setting empty name didn't throw any exception");
+        } catch (IllegalArgumentException e) {
+            p0.setName("Jhon Doe");
+        }
+        
+        try {
+            p0.setPlaceOfBirth("");
+            p0.setId(null);
+            manager.createPerson(p0);
+            fail("Setting empty placeOfBirth didn't throw any exception");
+        } catch (IllegalArgumentException e) {
+            p0.setPlaceOfBirth("Hospital");
+        }
+        
+        try {
+            p0.setPlaceOfDeath("");
+            p0.setId(null);
+            manager.createPerson(p0);
+            fail("Setting empty placeOfDeath didn't throw any exception");
+        } catch (IllegalArgumentException e) {
+            p0.setPlaceOfDeath("The same Hospital");
+        }
+        
+        try {
+            p0.setPlaceOfDeath(null);
+            p0.setId(null);
+            manager.createPerson(p0);
+            fail("Both or none Death parameters should be set");
+        } catch (IllegalArgumentException e) {
+            p0.setPlaceOfDeath("The same Hospital");
+        }
+        
+        try {
+            p0.setDateOfDeath(null);
+            p0.setId(null);
+            manager.createPerson(p0);
+            fail("Both or none Death parameters should be set");
+        } catch (IllegalArgumentException e) {
+            p0.setDateOfDeath(date);
         }
     }
     
