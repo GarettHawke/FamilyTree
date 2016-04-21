@@ -26,8 +26,7 @@ public class StartListener implements ServletContextListener {
             RelationCatalogImpl relationCatalog = new RelationCatalogImpl(dataSource);
             relationCatalog.setPeopleManager(peopleManager);
             servletContext.setAttribute("relationCatalog", relationCatalog);
-        } catch (SQLException ex) {
-        } catch (IOException ex) {
+        } catch (SQLException | IOException ex) {
         }
     }
 

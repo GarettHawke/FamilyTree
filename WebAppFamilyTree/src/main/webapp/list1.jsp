@@ -31,6 +31,8 @@
             <td><c:out value="${person.placeOfBirth}"/></td>
             <td><c:out value="${person.dateOfDeath}"/></td>
             <td><c:out value="${person.placeOfDeath}"/></td>
+            <td><form method="post" action="${pageContext.request.contextPath}/people/getUpdate?id=${person.id}"
+                      style="margin-bottom: 0;"><input type="submit" value="Upraviť"></form></td>
             <td><form method="post" action="${pageContext.request.contextPath}/people/delete?id=${person.id}"
                       style="margin-bottom: 0;"><input type="submit" value="Vymazať"></form></td>
         </tr>
