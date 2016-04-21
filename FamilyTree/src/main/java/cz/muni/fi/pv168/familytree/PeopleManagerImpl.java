@@ -25,14 +25,26 @@ public class PeopleManagerImpl implements PeopleManager {
         if (p.getName() == null) {
             throw new IllegalArgumentException("Person name was null");
         }
-        if (p.getGender()== null) {
+        if (p.getName().length() != 0) {
+            throw new IllegalArgumentException("Person name was empty");
+        }
+        if (p.getGender() == null) {
             throw new IllegalArgumentException("Person gender was null");
         }
-        if (p.getPlaceOfBirth()== null) {
+        if (p.getPlaceOfBirth() == null) {
             throw new IllegalArgumentException("Person placeOfBirth was null");
         }
-        if (p.getDateOfBirth()== null) {
+        if (p.getPlaceOfBirth().length() != 0) {
+            throw new IllegalArgumentException("Person placeOfBirth was empty");
+        }
+        if (p.getDateOfBirth() == null) {
             throw new IllegalArgumentException("Person dateOfBirth was null");
+        }
+        if ((p.getDateOfDeath() != null) != (p.getPlaceOfDeath() != null)) {
+            throw new IllegalArgumentException("Both death entries must be filled");
+        }
+        if (p.getPlaceOfDeath() != null && p.getPlaceOfDeath().length() != 0) {
+            throw new IllegalArgumentException("Person placeOfDeath was empty");
         }
         if (p.getDateOfDeath() != null && p.getDateOfBirth().isAfter(p.getDateOfDeath())) {
             throw new IllegalArgumentException("Person was born after death");
