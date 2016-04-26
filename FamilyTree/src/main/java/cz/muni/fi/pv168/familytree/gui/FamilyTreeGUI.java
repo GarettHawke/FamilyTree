@@ -50,6 +50,8 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
+        undoMenuItem = new javax.swing.JMenuItem();
+        redoMenuItem = new javax.swing.JMenuItem();
         manageMenu = new javax.swing.JMenu();
         createPersonMenuItem = new javax.swing.JMenuItem();
         updatePersonMenuItem = new javax.swing.JMenuItem();
@@ -61,6 +63,10 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         createRelationMenuItem = new javax.swing.JMenuItem();
         deleteRelationMenuItem = new javax.swing.JMenuItem();
+        findMenu = new javax.swing.JMenu();
+        findPersonMenuItem = new javax.swing.JMenuItem();
+        findMarriageMenuItem = new javax.swing.JMenuItem();
+        findRelationMenuItem = new javax.swing.JMenuItem();
         aboutMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -233,6 +239,18 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         menuBar.add(fileMenu);
 
         editMenu.setText("Edit");
+
+        undoMenuItem.setText("Undo");
+        undoMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                undoMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(undoMenuItem);
+
+        redoMenuItem.setText("Redo");
+        editMenu.add(redoMenuItem);
+
         menuBar.add(editMenu);
 
         manageMenu.setText("Manage");
@@ -264,6 +282,19 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         manageMenu.add(deleteRelationMenuItem);
 
         menuBar.add(manageMenu);
+
+        findMenu.setText("Find");
+
+        findPersonMenuItem.setText("Person");
+        findMenu.add(findPersonMenuItem);
+
+        findMarriageMenuItem.setText("Marriage");
+        findMenu.add(findMarriageMenuItem);
+
+        findRelationMenuItem.setText("Relation");
+        findMenu.add(findRelationMenuItem);
+
+        menuBar.add(findMenu);
 
         aboutMenu.setText("Help");
 
@@ -300,6 +331,10 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     private void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileMenuItemActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_openFileMenuItemActionPerformed
+
+    private void undoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoMenuItemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_undoMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -348,6 +383,10 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenuItem findMarriageMenuItem;
+    private javax.swing.JMenu findMenu;
+    private javax.swing.JMenuItem findPersonMenuItem;
+    private javax.swing.JMenuItem findRelationMenuItem;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -366,11 +405,13 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem openFileMenuItem;
     private javax.swing.JPanel peoplePanel;
     private javax.swing.JTable peopleTable;
+    private javax.swing.JMenuItem redoMenuItem;
     private javax.swing.JPanel relationsPanel;
     private javax.swing.JTable relationsTable;
     private javax.swing.JMenuItem saveFileAsMenuItem;
     private javax.swing.JMenuItem saveFileMenuItem;
     private javax.swing.JPanel treePanel;
+    private javax.swing.JMenuItem undoMenuItem;
     private javax.swing.JMenuItem updateMarriageMenuItem;
     private javax.swing.JMenuItem updatePersonMenuItem;
     // End of variables declaration//GEN-END:variables
