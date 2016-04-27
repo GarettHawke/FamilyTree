@@ -6,12 +6,22 @@
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="fileMenu">
           <Properties>
+            <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="java.awt.event.KeyEvent.VK_F" type="code"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="File"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="newFileMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+N"/>
+                </Property>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_N" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="New File..."/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newFileMenuItemActionPerformed"/>
@@ -21,6 +31,12 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="openFileMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+O"/>
+                </Property>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_O" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Open File..."/>
               </Properties>
               <Events>
@@ -31,11 +47,20 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveFileMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+S"/>
+                </Property>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_S" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Save"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveFileAsMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_A" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Save As..."/>
               </Properties>
             </MenuItem>
@@ -43,6 +68,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="exitMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_E" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Exit"/>
               </Properties>
             </MenuItem>
@@ -50,11 +78,20 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="editMenu">
           <Properties>
+            <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="java.awt.event.KeyEvent.VK_E" type="code"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Edit"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="undoMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+Z"/>
+                </Property>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_U" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Undo"/>
               </Properties>
               <Events>
@@ -63,6 +100,12 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="redoMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+Y"/>
+                </Property>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_R" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Redo"/>
               </Properties>
             </MenuItem>
@@ -70,21 +113,33 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="manageMenu">
           <Properties>
+            <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="java.awt.event.KeyEvent.VK_M" type="code"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Manage"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="createPersonMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_P" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Create Person"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="updatePersonMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit Person"/>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_U" type="code"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Update Person"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="deletePersonMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_D" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Delete Person"/>
               </Properties>
             </MenuItem>
@@ -92,16 +147,25 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="createMarriageMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_M" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Create Marriage"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="updateMarriageMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_P" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Update Marriage"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="deleteMarriageMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_E" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Delete Marriage"/>
               </Properties>
             </MenuItem>
@@ -109,11 +173,17 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="createRelationMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_R" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Create Relation"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="deleteRelationMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_L" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Delete Relation"/>
               </Properties>
             </MenuItem>
@@ -121,21 +191,33 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="findMenu">
           <Properties>
+            <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="java.awt.event.KeyEvent.VK_I" type="code"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Find"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="findPersonMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_P" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Person"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="findMarriageMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_M" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Marriage"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="findRelationMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_R" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Relation"/>
               </Properties>
             </MenuItem>
@@ -143,11 +225,17 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="aboutMenu">
           <Properties>
+            <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="java.awt.event.KeyEvent.VK_H" type="code"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Help"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="aboutMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="java.awt.event.KeyEvent.VK_A" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="About"/>
               </Properties>
             </MenuItem>
@@ -184,9 +272,9 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="jTabbedPane1" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -217,9 +305,9 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" min="-2" pref="375" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="jScrollPane1" pref="375" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -227,7 +315,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="317" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="254" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -244,7 +332,7 @@
                 <Component class="javax.swing.JTable" name="peopleTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="6" rowCount="1">
+                      <Table columnCount="6" rowCount="0">
                         <Column editable="true" title="Name" type="java.lang.String"/>
                         <Column editable="true" title="Gender" type="java.lang.Object"/>
                         <Column editable="true" title="Birth Date" type="java.lang.Object"/>
@@ -309,18 +397,18 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane2" min="-2" pref="376" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="jScrollPane2" pref="376" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane2" min="-2" pref="317" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="jScrollPane2" pref="254" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -336,7 +424,7 @@
                 <Component class="javax.swing.JTable" name="marriagesTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="4" rowCount="1">
+                      <Table columnCount="4" rowCount="0">
                         <Column editable="true" title="Spouse 1 Name" type="java.lang.String"/>
                         <Column editable="true" title="Spouse 2 Name" type="java.lang.String"/>
                         <Column editable="true" title="From" type="java.lang.Object"/>
@@ -389,18 +477,18 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane3" min="-2" pref="376" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="jScrollPane3" pref="376" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane3" min="-2" pref="317" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="jScrollPane3" pref="254" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -416,7 +504,7 @@
                 <Component class="javax.swing.JTable" name="relationsTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="2" rowCount="1">
+                      <Table columnCount="2" rowCount="0">
                         <Column editable="true" title="Parent Name" type="java.lang.String"/>
                         <Column editable="true" title="Child Name" type="java.lang.String"/>
                       </Table>
@@ -467,7 +555,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane4" pref="317" max="32767" attributes="0"/>
+                      <Component id="jScrollPane4" pref="254" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
