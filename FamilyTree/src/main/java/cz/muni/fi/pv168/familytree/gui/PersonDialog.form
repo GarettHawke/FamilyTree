@@ -68,28 +68,23 @@
                   <Component id="femaleRadioButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="8" max="32767" attributes="0"/>
               </Group>
-              <Group type="102" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="deathDateChooser" alignment="0" max="32767" attributes="0"/>
-                      <Component id="placeOfBirthField" alignment="0" max="32767" attributes="0"/>
-                      <Component id="birthDateChooser" alignment="0" max="32767" attributes="0"/>
-                      <Component id="nameField" alignment="0" max="32767" attributes="0"/>
-                      <Component id="placeOfDeathField" alignment="1" max="32767" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-              </Group>
+              <Component id="deathDateChooser" alignment="0" max="32767" attributes="0"/>
+              <Component id="placeOfBirthField" alignment="0" max="32767" attributes="0"/>
+              <Component id="birthDateChooser" alignment="0" max="32767" attributes="0"/>
+              <Component id="nameField" alignment="0" max="32767" attributes="0"/>
+              <Component id="placeOfDeathField" alignment="1" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Component id="nameField" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="femaleRadioButton" min="-2" max="-2" attributes="0"/>
                       <Component id="maleRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                   <Component id="birthDateChooser" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="placeOfBirthField" min="-2" max="-2" attributes="0"/>
@@ -148,16 +143,13 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="placeOfDeathLabel" alignment="1" min="-2" max="-2" attributes="0"/>
                       <Component id="dateOfDeathLabel" alignment="1" min="-2" max="-2" attributes="0"/>
-                      <Group type="102" alignment="1" attributes="0">
+                      <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+                          <Component id="placeOfBirthLabel" min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="placeOfBirthLabel" min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="nameLabel" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="genderLabel" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="dateOfBirthLabel" alignment="1" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="nameLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="genderLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="dateOfBirthLabel" alignment="1" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -169,13 +161,13 @@
                   <Component id="nameLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                   <Component id="genderLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
                   <Component id="dateOfBirthLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                   <Component id="placeOfBirthLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
                   <Component id="dateOfDeathLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                   <Component id="placeOfDeathLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
               </Group>
