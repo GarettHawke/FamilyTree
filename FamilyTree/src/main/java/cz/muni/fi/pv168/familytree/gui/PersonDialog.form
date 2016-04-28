@@ -2,11 +2,12 @@
 
 <Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <NonVisualComponents>
-    <Component class="javax.swing.ButtonGroup" name="gender">
+    <Component class="javax.swing.ButtonGroup" name="genderButtonGroup">
     </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
+    <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -106,7 +107,7 @@
         <Component class="javax.swing.JRadioButton" name="maleRadioButton">
           <Properties>
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="gender"/>
+              <ComponentRef name="genderButtonGroup"/>
             </Property>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Male"/>
@@ -115,7 +116,7 @@
         <Component class="javax.swing.JRadioButton" name="femaleRadioButton">
           <Properties>
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="gender"/>
+              <ComponentRef name="genderButtonGroup"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Female"/>
           </Properties>

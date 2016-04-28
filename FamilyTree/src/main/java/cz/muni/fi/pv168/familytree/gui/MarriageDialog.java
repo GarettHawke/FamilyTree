@@ -44,21 +44,23 @@ public class MarriageDialog extends javax.swing.JDialog {
         setTitle("Add Marriage");
         setResizable(false);
 
-        spouse1Label.setText("Spouse 1 Name");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
+        spouse1Label.setText(bundle.getString("spouse1Label")); // NOI18N
+        spouse1Label.setToolTipText("");
 
-        spouse2Label.setText("Spouse 2 Name");
+        spouse2Label.setText(bundle.getString("spouse2Label")); // NOI18N
 
-        fromLabel.setText("From");
+        fromLabel.setText(bundle.getString("fromLabel")); // NOI18N
 
-        toLabel.setText("To");
+        toLabel.setText(bundle.getString("toLabel")); // NOI18N
 
         spouse2ComboBox.setToolTipText("");
         spouse2ComboBox.setPreferredSize(new java.awt.Dimension(33, 26));
 
-        okButton.setText("Ok");
+        okButton.setText(bundle.getString("okButton")); // NOI18N
         okButton.setPreferredSize(new java.awt.Dimension(70, 32));
 
-        cancelButton.setText("Cancel");
+        cancelButton.setText(bundle.getString("cancelButton")); // NOI18N
         cancelButton.setPreferredSize(new java.awt.Dimension(70, 32));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);

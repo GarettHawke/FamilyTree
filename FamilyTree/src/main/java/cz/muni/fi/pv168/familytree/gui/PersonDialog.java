@@ -28,7 +28,7 @@ public class PersonDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        gender = new javax.swing.ButtonGroup();
+        genderButtonGroup = new javax.swing.ButtonGroup();
         varInputPanel = new javax.swing.JPanel();
         nameField = new javax.swing.JTextField();
         maleRadioButton = new javax.swing.JRadioButton();
@@ -49,6 +49,7 @@ public class PersonDialog extends javax.swing.JDialog {
         cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         nameField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -56,11 +57,11 @@ public class PersonDialog extends javax.swing.JDialog {
             }
         });
 
-        gender.add(maleRadioButton);
+        genderButtonGroup.add(maleRadioButton);
         maleRadioButton.setSelected(true);
         maleRadioButton.setText("Male");
 
-        gender.add(femaleRadioButton);
+        genderButtonGroup.add(femaleRadioButton);
         femaleRadioButton.setText("Female");
 
         placeOfBirthField.addActionListener(new java.awt.event.ActionListener() {
@@ -244,7 +245,7 @@ public class PersonDialog extends javax.swing.JDialog {
     private javax.swing.JLabel dateOfDeathLabel;
     private com.toedter.calendar.JDateChooser deathDateChooser;
     private javax.swing.JRadioButton femaleRadioButton;
-    private javax.swing.ButtonGroup gender;
+    private javax.swing.ButtonGroup genderButtonGroup;
     private javax.swing.JLabel genderLabel;
     private javax.swing.JRadioButton maleRadioButton;
     private javax.swing.JTextField nameField;
