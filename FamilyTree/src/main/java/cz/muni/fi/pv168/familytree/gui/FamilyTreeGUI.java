@@ -16,6 +16,64 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
      */
     public FamilyTreeGUI() {
         initComponents();
+        fixInitComponents();
+    }
+    
+    private void fixInitComponents() { //To localize table heads. Wasnt able to find other way
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
+        
+        peopleTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                bundle.getString("peopleTableName"), bundle.getString("peopleTableGender"), bundle.getString("peopleTableDateOfBirth"),
+                bundle.getString("peopleTablePlaceOfBirth"), bundle.getString("peopleTableDateOfDeath"), bundle.getString("peopleTablePlaceOfDeath")
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        
+        marriagesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                bundle.getString("marriagesTableSpouse1"), bundle.getString("marriagesTableSpouse2"), 
+                bundle.getString("marriagesTableFrom"), bundle.getString("marriagesTableTo")
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        
+        relationsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                bundle.getString("relationsTableChildName"), bundle.getString("relationsTableParentName")
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
     }
 
     /**
@@ -98,18 +156,19 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             peoplePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peoplePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE)
                 .addGap(7, 7, 7))
         );
         peoplePanelLayout.setVerticalGroup(
             peoplePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peoplePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("People", peoplePanel);
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
+        jTabbedPane1.addTab(bundle.getString("peoplePanel"), peoplePanel); // NOI18N
 
         marriagesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -135,18 +194,18 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             marriagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(marriagesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE)
                 .addContainerGap())
         );
         marriagesPanelLayout.setVerticalGroup(
             marriagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(marriagesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Marriages", marriagesPanel);
+        jTabbedPane1.addTab(bundle.getString("marriagesPanel"), marriagesPanel); // NOI18N
 
         relationsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -172,18 +231,18 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             relationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(relationsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE)
                 .addContainerGap())
         );
         relationsPanelLayout.setVerticalGroup(
             relationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(relationsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Relations", relationsPanel);
+        jTabbedPane1.addTab(bundle.getString("relationsPanel"), relationsPanel); // NOI18N
 
         jScrollPane4.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -193,25 +252,25 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             treePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(treePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE)
                 .addContainerGap())
         );
         treePanelLayout.setVerticalGroup(
             treePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(treePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Family Tree", treePanel);
+        jTabbedPane1.addTab(bundle.getString("treePanel"), treePanel); // NOI18N
 
         fileMenu.setMnemonic(java.awt.event.KeyEvent.VK_F);
-        fileMenu.setText("File");
+        fileMenu.setText(bundle.getString("fileMenu")); // NOI18N
 
         newFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         newFileMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_N);
-        newFileMenuItem.setText("New File...");
+        newFileMenuItem.setText(bundle.getString("newFileMenuItem")); // NOI18N
         newFileMenuItem.setToolTipText("");
         newFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -223,7 +282,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
         openFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         openFileMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_O);
-        openFileMenuItem.setText("Open File...");
+        openFileMenuItem.setText(bundle.getString("openFileMenuItem")); // NOI18N
         openFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openFileMenuItemActionPerformed(evt);
@@ -234,26 +293,26 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
         saveFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         saveFileMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_S);
-        saveFileMenuItem.setText("Save");
+        saveFileMenuItem.setText(bundle.getString("saveFileMenuItem")); // NOI18N
         fileMenu.add(saveFileMenuItem);
 
         saveFileAsMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_A);
-        saveFileAsMenuItem.setText("Save As...");
+        saveFileAsMenuItem.setText(bundle.getString("saveFileAsMenuItem")); // NOI18N
         fileMenu.add(saveFileAsMenuItem);
         fileMenu.add(jSeparator3);
 
         exitMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_E);
-        exitMenuItem.setText("Exit");
+        exitMenuItem.setText(bundle.getString("exitMenuItem")); // NOI18N
         fileMenu.add(exitMenuItem);
 
         menuBar.add(fileMenu);
 
         editMenu.setMnemonic(java.awt.event.KeyEvent.VK_E);
-        editMenu.setText("Edit");
+        editMenu.setText(bundle.getString("editMenu")); // NOI18N
 
         undoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
         undoMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_U);
-        undoMenuItem.setText("Undo");
+        undoMenuItem.setText(bundle.getString("undoMenuItem")); // NOI18N
         undoMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 undoMenuItemActionPerformed(evt);
@@ -263,72 +322,77 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
         redoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y, java.awt.event.InputEvent.CTRL_MASK));
         redoMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_R);
-        redoMenuItem.setText("Redo");
+        redoMenuItem.setText(bundle.getString("redoMenuItem")); // NOI18N
         editMenu.add(redoMenuItem);
 
         menuBar.add(editMenu);
 
         manageMenu.setMnemonic(java.awt.event.KeyEvent.VK_M);
-        manageMenu.setText("Manage");
+        manageMenu.setText(bundle.getString("manageMenu")); // NOI18N
 
         createPersonMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_P);
-        createPersonMenuItem.setText("Create Person");
+        createPersonMenuItem.setText(bundle.getString("createPersonMenuItem")); // NOI18N
         manageMenu.add(createPersonMenuItem);
 
         updatePersonMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_U);
-        updatePersonMenuItem.setText("Update Person");
+        updatePersonMenuItem.setText(bundle.getString("updatePersonMenuItem")); // NOI18N
         manageMenu.add(updatePersonMenuItem);
 
         deletePersonMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_D);
-        deletePersonMenuItem.setText("Delete Person");
+        deletePersonMenuItem.setText(bundle.getString("deletePersonMenuItem")); // NOI18N
         manageMenu.add(deletePersonMenuItem);
         manageMenu.add(jSeparator4);
 
         createMarriageMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_M);
         createMarriageMenuItem.setText("Create Marriage");
+        createMarriageMenuItem.setActionCommand(bundle.getString("createMarriageMenuItem")); // NOI18N
         manageMenu.add(createMarriageMenuItem);
 
         updateMarriageMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_P);
         updateMarriageMenuItem.setText("Update Marriage");
+        updateMarriageMenuItem.setActionCommand(bundle.getString("updateMarriageMenuItem")); // NOI18N
         manageMenu.add(updateMarriageMenuItem);
 
         deleteMarriageMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_E);
         deleteMarriageMenuItem.setText("Delete Marriage");
+        deleteMarriageMenuItem.setActionCommand(bundle.getString("deleteMarriageMenuItem")); // NOI18N
         manageMenu.add(deleteMarriageMenuItem);
         manageMenu.add(jSeparator5);
 
         createRelationMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_R);
         createRelationMenuItem.setText("Create Relation");
+        createRelationMenuItem.setActionCommand(bundle.getString("createRelationMenuItem")); // NOI18N
         manageMenu.add(createRelationMenuItem);
 
         deleteRelationMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_L);
         deleteRelationMenuItem.setText("Delete Relation");
+        deleteRelationMenuItem.setActionCommand(bundle.getString("deleteRelationMenuItem")); // NOI18N
         manageMenu.add(deleteRelationMenuItem);
 
         menuBar.add(manageMenu);
 
         findMenu.setMnemonic(java.awt.event.KeyEvent.VK_I);
-        findMenu.setText("Find");
+        findMenu.setText(bundle.getString("findMenu")); // NOI18N
 
         findPersonMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_P);
-        findPersonMenuItem.setText("Person");
+        findPersonMenuItem.setText(bundle.getString("findPersonMenuItem")); // NOI18N
         findMenu.add(findPersonMenuItem);
 
         findMarriageMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_M);
-        findMarriageMenuItem.setText("Marriage");
+        findMarriageMenuItem.setText(bundle.getString("findMarriageMenuItem")); // NOI18N
         findMenu.add(findMarriageMenuItem);
 
         findRelationMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_R);
-        findRelationMenuItem.setText("Relation");
+        findRelationMenuItem.setText(bundle.getString("findRelationMenuItem")); // NOI18N
         findMenu.add(findRelationMenuItem);
 
         menuBar.add(findMenu);
 
         aboutMenu.setMnemonic(java.awt.event.KeyEvent.VK_H);
-        aboutMenu.setText("Help");
+        aboutMenu.setText(bundle.getString("aboutMenu")); // NOI18N
 
         aboutMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_A);
-        aboutMenuItem.setText("About");
+        aboutMenuItem.setText(bundle.getString("aboutMenuItem")); // NOI18N
         aboutMenu.add(aboutMenuItem);
 
         menuBar.add(aboutMenu);
@@ -347,7 +411,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane1)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
                 .addContainerGap())
         );
 

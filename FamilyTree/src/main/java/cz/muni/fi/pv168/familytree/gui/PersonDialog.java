@@ -45,7 +45,7 @@ public class PersonDialog extends javax.swing.JDialog {
         dateOfDeathLabel = new javax.swing.JLabel();
         placeOfDeathLabel = new javax.swing.JLabel();
         buttonsSplitPane = new javax.swing.JSplitPane();
-        submitButton = new javax.swing.JButton();
+        okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -59,10 +59,11 @@ public class PersonDialog extends javax.swing.JDialog {
 
         genderButtonGroup.add(maleRadioButton);
         maleRadioButton.setSelected(true);
-        maleRadioButton.setText("Male");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
+        maleRadioButton.setText(bundle.getString("maleRadioButton")); // NOI18N
 
         genderButtonGroup.add(femaleRadioButton);
-        femaleRadioButton.setText("Female");
+        femaleRadioButton.setText(bundle.getString("femaleRadioButton")); // NOI18N
 
         placeOfBirthField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -104,17 +105,17 @@ public class PersonDialog extends javax.swing.JDialog {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        nameLabel.setText("Name:");
+        nameLabel.setText(bundle.getString("nameLabel")); // NOI18N
 
-        genderLabel.setText("Gender:");
+        genderLabel.setText(bundle.getString("genderLabel")); // NOI18N
 
-        dateOfBirthLabel.setText("Date of Birth:");
+        dateOfBirthLabel.setText(bundle.getString("dateOfBirthLabel")); // NOI18N
 
-        placeOfBirthLabel.setText("Place of Birth:");
+        placeOfBirthLabel.setText(bundle.getString("placeOfBirthLabel")); // NOI18N
 
-        dateOfDeathLabel.setText("Date of Death:");
+        dateOfDeathLabel.setText(bundle.getString("dateOfDeathLabel")); // NOI18N
 
-        placeOfDeathLabel.setText("Place of Death:");
+        placeOfDeathLabel.setText(bundle.getString("placeOfDeathLabel")); // NOI18N
 
         javax.swing.GroupLayout varLabelsPanelLayout = new javax.swing.GroupLayout(varLabelsPanel);
         varLabelsPanel.setLayout(varLabelsPanelLayout);
@@ -123,14 +124,12 @@ public class PersonDialog extends javax.swing.JDialog {
             .addGroup(varLabelsPanelLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(varLabelsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(placeOfDeathLabel, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(dateOfBirthLabel, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(genderLabel, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(nameLabel, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(placeOfBirthLabel, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(dateOfDeathLabel, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, varLabelsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(placeOfBirthLabel)
-                        .addGroup(varLabelsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(nameLabel, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(genderLabel, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(dateOfBirthLabel, javax.swing.GroupLayout.Alignment.TRAILING)))))
+                    .addComponent(placeOfDeathLabel, javax.swing.GroupLayout.Alignment.TRAILING)))
         );
         varLabelsPanelLayout.setVerticalGroup(
             varLabelsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -152,10 +151,10 @@ public class PersonDialog extends javax.swing.JDialog {
         buttonsSplitPane.setBorder(null);
         buttonsSplitPane.setDividerSize(0);
 
-        submitButton.setText("Submit");
-        buttonsSplitPane.setLeftComponent(submitButton);
+        okButton.setText(bundle.getString("okButton")); // NOI18N
+        buttonsSplitPane.setLeftComponent(okButton);
 
-        cancelButton.setText("Cancel");
+        cancelButton.setText(bundle.getString("cancelButton")); // NOI18N
         buttonsSplitPane.setRightComponent(cancelButton);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -250,11 +249,11 @@ public class PersonDialog extends javax.swing.JDialog {
     private javax.swing.JRadioButton maleRadioButton;
     private javax.swing.JTextField nameField;
     private javax.swing.JLabel nameLabel;
+    private javax.swing.JButton okButton;
     private javax.swing.JTextField placeOfBirthField;
     private javax.swing.JLabel placeOfBirthLabel;
     private javax.swing.JTextField placeOfDeathField;
     private javax.swing.JLabel placeOfDeathLabel;
-    private javax.swing.JButton submitButton;
     private javax.swing.JPanel varInputPanel;
     private javax.swing.JPanel varLabelsPanel;
     // End of variables declaration//GEN-END:variables

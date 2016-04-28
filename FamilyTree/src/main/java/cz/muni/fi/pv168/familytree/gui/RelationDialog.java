@@ -35,15 +35,16 @@ public class RelationDialog extends javax.swing.JDialog {
         parentComboBox = new javax.swing.JComboBox<>();
         childComboBox = new javax.swing.JComboBox<>();
         buttonsSplitPane = new javax.swing.JSplitPane();
-        submitButton = new javax.swing.JButton();
+        okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
-        parentLabel.setText("Parent:");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
+        parentLabel.setText(bundle.getString("parentLabel")); // NOI18N
 
-        childLabel.setText("Child:");
+        childLabel.setText(bundle.getString("childLabel")); // NOI18N
 
         javax.swing.GroupLayout varLabelsPanelLayout = new javax.swing.GroupLayout(varLabelsPanel);
         varLabelsPanel.setLayout(varLabelsPanelLayout);
@@ -92,10 +93,10 @@ public class RelationDialog extends javax.swing.JDialog {
         buttonsSplitPane.setBorder(null);
         buttonsSplitPane.setDividerSize(0);
 
-        submitButton.setText("Submit");
-        buttonsSplitPane.setLeftComponent(submitButton);
+        okButton.setText(bundle.getString("okButton")); // NOI18N
+        buttonsSplitPane.setLeftComponent(okButton);
 
-        cancelButton.setText("Cancel");
+        cancelButton.setText(bundle.getString("cancelButton")); // NOI18N
         buttonsSplitPane.setRightComponent(cancelButton);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -174,9 +175,9 @@ public class RelationDialog extends javax.swing.JDialog {
     private javax.swing.JButton cancelButton;
     private javax.swing.JComboBox<String> childComboBox;
     private javax.swing.JLabel childLabel;
+    private javax.swing.JButton okButton;
     private javax.swing.JComboBox<String> parentComboBox;
     private javax.swing.JLabel parentLabel;
-    private javax.swing.JButton submitButton;
     private javax.swing.JPanel varInputPanel;
     private javax.swing.JPanel varLabelsPanel;
     // End of variables declaration//GEN-END:variables
