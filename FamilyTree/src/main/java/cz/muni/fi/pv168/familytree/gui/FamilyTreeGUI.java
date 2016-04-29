@@ -125,7 +125,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         findPersonMenuItem = new javax.swing.JMenuItem();
         findMarriageMenuItem = new javax.swing.JMenuItem();
         findRelationMenuItem = new javax.swing.JMenuItem();
-        aboutMenu = new javax.swing.JMenu();
+        helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -344,28 +344,28 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         manageMenu.add(jSeparator4);
 
         createMarriageMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_M);
-        createMarriageMenuItem.setText("Create Marriage");
+        createMarriageMenuItem.setText(bundle.getString("createMarriageMenuItem")); // NOI18N
         createMarriageMenuItem.setActionCommand(bundle.getString("createMarriageMenuItem")); // NOI18N
         manageMenu.add(createMarriageMenuItem);
 
         updateMarriageMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_P);
-        updateMarriageMenuItem.setText("Update Marriage");
+        updateMarriageMenuItem.setText(bundle.getString("updateMarriageMenuItem")); // NOI18N
         updateMarriageMenuItem.setActionCommand(bundle.getString("updateMarriageMenuItem")); // NOI18N
         manageMenu.add(updateMarriageMenuItem);
 
         deleteMarriageMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_E);
-        deleteMarriageMenuItem.setText("Delete Marriage");
+        deleteMarriageMenuItem.setText(bundle.getString("deleteMarriageMenuItem")); // NOI18N
         deleteMarriageMenuItem.setActionCommand(bundle.getString("deleteMarriageMenuItem")); // NOI18N
         manageMenu.add(deleteMarriageMenuItem);
         manageMenu.add(jSeparator5);
 
         createRelationMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_R);
-        createRelationMenuItem.setText("Create Relation");
+        createRelationMenuItem.setText(bundle.getString("createRelationMenuItem")); // NOI18N
         createRelationMenuItem.setActionCommand(bundle.getString("createRelationMenuItem")); // NOI18N
         manageMenu.add(createRelationMenuItem);
 
         deleteRelationMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_L);
-        deleteRelationMenuItem.setText("Delete Relation");
+        deleteRelationMenuItem.setText(bundle.getString("deleteRelationMenuItem")); // NOI18N
         deleteRelationMenuItem.setActionCommand(bundle.getString("deleteRelationMenuItem")); // NOI18N
         manageMenu.add(deleteRelationMenuItem);
 
@@ -388,14 +388,14 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
         menuBar.add(findMenu);
 
-        aboutMenu.setMnemonic(java.awt.event.KeyEvent.VK_H);
-        aboutMenu.setText(bundle.getString("aboutMenu")); // NOI18N
+        helpMenu.setMnemonic(java.awt.event.KeyEvent.VK_H);
+        helpMenu.setText(bundle.getString("helpMenu")); // NOI18N
 
         aboutMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_A);
         aboutMenuItem.setText(bundle.getString("aboutMenuItem")); // NOI18N
-        aboutMenu.add(aboutMenuItem);
+        helpMenu.add(aboutMenuItem);
 
-        menuBar.add(aboutMenu);
+        menuBar.add(helpMenu);
 
         setJMenuBar(menuBar);
 
@@ -466,7 +466,6 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu aboutMenu;
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuItem createMarriageMenuItem;
     private javax.swing.JMenuItem createPersonMenuItem;
@@ -481,6 +480,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     private javax.swing.JMenu findMenu;
     private javax.swing.JMenuItem findPersonMenuItem;
     private javax.swing.JMenuItem findRelationMenuItem;
+    private javax.swing.JMenu helpMenu;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
