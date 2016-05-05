@@ -16,66 +16,8 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
      */
     public FamilyTreeGUI() {
         initComponents();
-        fixInitComponents();
     }
     
-    private void fixInitComponents() { //To localize table heads. Wasnt able to find other way
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
-        
-        peopleTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                bundle.getString("peopleTableName"), bundle.getString("peopleTableGender"), bundle.getString("peopleTableDateOfBirth"),
-                bundle.getString("peopleTablePlaceOfBirth"), bundle.getString("peopleTableDateOfDeath"), bundle.getString("peopleTablePlaceOfDeath")
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        
-        marriagesTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                bundle.getString("marriagesTableSpouse1"), bundle.getString("marriagesTableSpouse2"), 
-                bundle.getString("marriagesTableFrom"), bundle.getString("marriagesTableTo")
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        
-        relationsTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                bundle.getString("relationsTableChildName"), bundle.getString("relationsTableParentName")
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -149,6 +91,15 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(peopleTable);
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
+        if (peopleTable.getColumnModel().getColumnCount() > 0) {
+            peopleTable.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("peopleTableName")); // NOI18N
+            peopleTable.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("peopleTableGender")); // NOI18N
+            peopleTable.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("peopleTableDateOfBirth")); // NOI18N
+            peopleTable.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("peopleTablePlaceOfBirth")); // NOI18N
+            peopleTable.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("peopleTableDateOfDeath")); // NOI18N
+            peopleTable.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("peopleTablePlaceOfDeath")); // NOI18N
+        }
 
         javax.swing.GroupLayout peoplePanelLayout = new javax.swing.GroupLayout(peoplePanel);
         peoplePanel.setLayout(peoplePanelLayout);
@@ -167,7 +118,6 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
         jTabbedPane1.addTab(bundle.getString("peoplePanel"), peoplePanel); // NOI18N
 
         marriagesTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -187,6 +137,12 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             }
         });
         jScrollPane2.setViewportView(marriagesTable);
+        if (marriagesTable.getColumnModel().getColumnCount() > 0) {
+            marriagesTable.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("marriagesTableSpouse1")); // NOI18N
+            marriagesTable.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("marriagesTableSpouse2")); // NOI18N
+            marriagesTable.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("marriagesTableFrom")); // NOI18N
+            marriagesTable.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("marriagesTableTo")); // NOI18N
+        }
 
         javax.swing.GroupLayout marriagesPanelLayout = new javax.swing.GroupLayout(marriagesPanel);
         marriagesPanel.setLayout(marriagesPanelLayout);
@@ -224,6 +180,10 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             }
         });
         jScrollPane3.setViewportView(relationsTable);
+        if (relationsTable.getColumnModel().getColumnCount() > 0) {
+            relationsTable.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("relationsTableParentName")); // NOI18N
+            relationsTable.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("relationsTableChildName")); // NOI18N
+        }
 
         javax.swing.GroupLayout relationsPanelLayout = new javax.swing.GroupLayout(relationsPanel);
         relationsPanel.setLayout(relationsPanelLayout);
@@ -411,7 +371,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
 
