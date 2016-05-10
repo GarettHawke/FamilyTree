@@ -5,18 +5,37 @@
  */
 package cz.muni.fi.pv168.familytree.gui;
 
+import cz.muni.fi.pv168.familytree.PeopleManager;
+import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
+import cz.muni.fi.pv168.familytree.Person;
+import cz.muni.fi.pv168.familytree.ServiceFailureException;
+import java.sql.SQLException;
+import javax.sql.DataSource;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author brani
  */
 public class PersonDialog extends javax.swing.JDialog {
+    
+    private Person p;
+    private DataSource ds;
 
     /**
      * Creates new form PersonDialog
+     * @param parent
+     * @param modal
      */
     public PersonDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+    }
+
+    public PersonDialog(java.awt.Frame parent, boolean modal, Person p, DataSource ds) {
+        this(parent, modal);
+        this.p = p;
+        this.ds = ds;
     }
 
     /**
@@ -51,12 +70,6 @@ public class PersonDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
-        nameField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nameFieldActionPerformed(evt);
-            }
-        });
-
         genderButtonGroup.add(maleRadioButton);
         maleRadioButton.setSelected(true);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
@@ -64,12 +77,6 @@ public class PersonDialog extends javax.swing.JDialog {
 
         genderButtonGroup.add(femaleRadioButton);
         femaleRadioButton.setText(bundle.getString("femaleRadioButton")); // NOI18N
-
-        placeOfBirthField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                placeOfBirthFieldActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout varInputPanelLayout = new javax.swing.GroupLayout(varInputPanel);
         varInputPanel.setLayout(varInputPanelLayout);
@@ -152,9 +159,19 @@ public class PersonDialog extends javax.swing.JDialog {
         buttonsSplitPane.setDividerSize(0);
 
         okButton.setText(bundle.getString("okButton")); // NOI18N
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
         buttonsSplitPane.setLeftComponent(okButton);
 
         cancelButton.setText(bundle.getString("cancelButton")); // NOI18N
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
         buttonsSplitPane.setRightComponent(cancelButton);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -186,13 +203,32 @@ public class PersonDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void nameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nameFieldActionPerformed
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        PeopleManager pManager = new PeopleManagerImpl(ds);
+        
+        try{
+            PeopleManagerImpl.validate(p);
+            if (p != null) {
+                //<threadStuff>
+                pManager.createPerson(p);
+                //</threadStuff>
+            } else {
+                //<threadStuff>
+                pManager.updatePerson(p);
+                //</threadStuff>
+            }
+            this.setVisible(false);
+        } catch (IllegalArgumentException ex) {
+            JOptionPane jp = new JOptionPane(ex.getMessage(), ERROR);
+            jp.setVisible(true);
+        } catch (ServiceFailureException ex) {
+            //log
+        }
+    }//GEN-LAST:event_okButtonActionPerformed
 
-    private void placeOfBirthFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_placeOfBirthFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_placeOfBirthFieldActionPerformed
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        this.setVisible(false);
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**
      * @param args the command line arguments
