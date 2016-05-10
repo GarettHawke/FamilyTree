@@ -5,6 +5,7 @@
  */
 package cz.muni.fi.pv168.familytree.gui;
 
+import cz.muni.fi.pv168.familytree.GenderType;
 import cz.muni.fi.pv168.familytree.PeopleManager;
 import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
@@ -207,20 +208,39 @@ public class PersonDialog extends javax.swing.JDialog {
         PeopleManager pManager = new PeopleManagerImpl(ds);
         
         try{
-            PeopleManagerImpl.validate(p);
-            if (p != null) {
+            if (p == null) {
+                p = new Person();
+                if(nameField.getText().length() != 0)
+                    p.setName(nameField.getText());
+                else
+                    p.setName(null);
+                if(maleRadioButton.isSelected())
+                    p.setGender(GenderType.MAN);
+                else
+                    p.setGender(GenderType.WOMAN);
+                p.setPlaceOfBirth(placeOfBirthField.getText());
+                p.setDateOfBirth(new java.sql.Date(birthDateChooser.getDate().getTime()).toLocalDate());
+                if(placeOfDeathField.getText().length() != 0)
+                    p.setPlaceOfDeath(placeOfDeathField.getText());
+                else
+                    p.setPlaceOfDeath(null);
+                java.util.Date date = deathDateChooser.getDate();
+                p.setDateOfDeath(date != null ? new java.sql.Date(date.getTime()).toLocalDate() : null);
+                
                 //<threadStuff>
+                PeopleManagerImpl.validate(p);
                 pManager.createPerson(p);
                 //</threadStuff>
             } else {
                 //<threadStuff>
+                PeopleManagerImpl.validate(p);
+            
                 pManager.updatePerson(p);
                 //</threadStuff>
             }
             this.setVisible(false);
         } catch (IllegalArgumentException ex) {
-            JOptionPane jp = new JOptionPane(ex.getMessage(), ERROR);
-            jp.setVisible(true);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         } catch (ServiceFailureException ex) {
             //log
         }

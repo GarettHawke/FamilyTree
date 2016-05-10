@@ -18,19 +18,19 @@ public class Main {
         ds.setCreateDatabase("create");
         
         String createTablePeople = getContentFileJar("SQL-createTablePeople.sql");
-        String insertPeople = getContentFileJar("SQL-insertPeople.sql");
+        //String insertPeople = getContentFileJar("SQL-insertPeople.sql");
         String createTableMarriages = getContentFileJar("SQL-createTableMarriages.sql");
-        String insertMarriages = getContentFileJar("SQL-insertMarriages.sql");
+        //String insertMarriages = getContentFileJar("SQL-insertMarriages.sql");
         String createTableRelations = getContentFileJar("SQL-createTableRelations.sql");
-        String insertRelations = getContentFileJar("SQL-insertRelations.sql");
+        //String insertRelations = getContentFileJar("SQL-insertRelations.sql");
         
         try (Connection connection = ds.getConnection()) {
             connection.prepareStatement(createTablePeople).executeUpdate();
-            connection.prepareStatement(insertPeople).executeUpdate();
+            //connection.prepareStatement(insertPeople).executeUpdate();
             connection.prepareStatement(createTableMarriages).executeUpdate();
-            connection.prepareStatement(insertMarriages).executeUpdate();
+            //connection.prepareStatement(insertMarriages).executeUpdate();
             connection.prepareStatement(createTableRelations).executeUpdate();
-            connection.prepareStatement(insertRelations).executeUpdate();
+            //connection.prepareStatement(insertRelations).executeUpdate();
         }
         
         return ds;

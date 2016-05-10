@@ -5,6 +5,8 @@
  */
 package cz.muni.fi.pv168.familytree.gui;
 
+import cz.muni.fi.pv168.familytree.Marriage;
+
 /**
  *
  * @author Peter
@@ -58,9 +60,19 @@ public class MarriageDialog extends javax.swing.JDialog {
 
         okButton.setText(bundle.getString("okButton")); // NOI18N
         okButton.setPreferredSize(new java.awt.Dimension(70, 32));
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
 
         cancelButton.setText(bundle.getString("cancelButton")); // NOI18N
         cancelButton.setPreferredSize(new java.awt.Dimension(70, 32));
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -130,6 +142,14 @@ public class MarriageDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_okButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        Marriage marriage = new Marriage();
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**
      * @param args the command line arguments

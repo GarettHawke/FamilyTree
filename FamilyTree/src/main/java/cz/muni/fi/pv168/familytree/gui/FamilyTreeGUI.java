@@ -5,7 +5,20 @@
  */
 package cz.muni.fi.pv168.familytree.gui;
 
+import javax.sql.DataSource;
 import javax.swing.JFileChooser;
+
+import static cz.muni.fi.pv168.familytree.Main.createMemoryDatabase;
+import cz.muni.fi.pv168.familytree.Marriage;
+import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
+import cz.muni.fi.pv168.familytree.Person;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import javax.swing.SwingWorker;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -13,11 +26,28 @@ import javax.swing.JFileChooser;
  */
 public class FamilyTreeGUI extends javax.swing.JFrame {
 
+    DataSource dataSource;
+    
+    List<Person> peopleList;
+    List<Marriage>  marriagesList;
+    Map<Person, List<Person>> relationsMap;
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+    
     /**
      * Creates new form FamilyTreeGUI
      */
     public FamilyTreeGUI() {
         initComponents();
+        try {
+            dataSource = createMemoryDatabase();
+        } catch(SQLException ex) {
+            //logger
+        } catch(IOException ex) {
+            //logger
+        }
     }
     
     /**
@@ -87,9 +117,16 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         jScrollPane1.setViewportView(peopleTable);
@@ -399,10 +436,43 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_undoMenuItemActionPerformed
 
     private void createPersonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createPersonMenuItemActionPerformed
-        PersonDialog pd = new PersonDialog(this, true);
+        PersonDialog pd = new PersonDialog(this, true, null, dataSource);
         pd.setVisible(true);
+        updatePeopleTable();
     }//GEN-LAST:event_createPersonMenuItemActionPerformed
 
+    private PeopleListSwingWorker peopleListSwingWorker;
+
+    private void updatePeopleTable() {
+        peopleListSwingWorker = new PeopleListSwingWorker();
+        peopleListSwingWorker.execute();
+    }
+    
+    private class PeopleListSwingWorker extends SwingWorker<List<Person>, Void> {
+        @Override
+        protected List<Person> doInBackground() throws Exception {
+            return new PeopleManagerImpl(dataSource).findAllPeople();
+        }
+        
+        @Override
+        protected void done() {
+            DefaultTableModel model = (DefaultTableModel) peopleTable.getModel();
+            for(int i = 0;  i < model.getRowCount(); i++) {
+                model.removeRow(i);
+            }
+            try {
+                peopleList = get();
+                for(int i = 0; i < peopleList.size(); i++) {
+                    Person p = peopleList.get(i);
+                    model.addRow(new Object[]{p.getName(), p.getGender(), p.getDateOfBirth(), p.getPlaceOfBirth(), p.getDateOfDeath(), p.getPlaceOfDeath()});
+                }
+            } catch(InterruptedException ex) {
+                //logger
+            } catch(ExecutionException ex) {
+                //logger
+            }
+        }
+    }
     /**
      * @param args the command line arguments
      */
