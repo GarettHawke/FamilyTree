@@ -233,4 +233,16 @@ public class PeopleManagerImpl implements PeopleManager {
                     "Error when retrieving all People", ex);
         }
     }
+    
+    @Override
+    public void deleteAll() {
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement st = connection.prepareStatement(
+                        "DELETE FROM PEOPLE")) {
+            st.executeUpdate();
+        } catch(SQLException ex) {
+            throw new ServiceFailureException("Error when deleting all people");
+        }
+    }
 }

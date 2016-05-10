@@ -17,4 +17,6 @@ public interface PeopleManager {
     Person findPersonById(Long id);
     
     List<Person> findAllPeople();
+    
+    void deleteAll();
 }

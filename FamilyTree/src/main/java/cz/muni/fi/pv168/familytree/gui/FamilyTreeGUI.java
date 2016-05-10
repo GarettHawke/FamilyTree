@@ -12,11 +12,13 @@ import static cz.muni.fi.pv168.familytree.Main.createMemoryDatabase;
 import cz.muni.fi.pv168.familytree.Marriage;
 import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 
@@ -31,6 +33,10 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     List<Person> peopleList;
     List<Marriage>  marriagesList;
     Map<Person, List<Person>> relationsMap;
+    
+    File file;
+    
+    private PeopleListSwingWorker peopleListSwingWorker;
 
     public DataSource getDataSource() {
         return dataSource;
@@ -48,6 +54,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         } catch(IOException ex) {
             //logger
         }
+        file = null;
     }
     
     /**
@@ -81,9 +88,6 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         saveFileAsMenuItem = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
-        editMenu = new javax.swing.JMenu();
-        undoMenuItem = new javax.swing.JMenuItem();
-        redoMenuItem = new javax.swing.JMenuItem();
         manageMenu = new javax.swing.JMenu();
         createPersonMenuItem = new javax.swing.JMenuItem();
         updatePersonMenuItem = new javax.swing.JMenuItem();
@@ -293,38 +297,33 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         saveFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         saveFileMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_S);
         saveFileMenuItem.setText(bundle.getString("saveFileMenuItem")); // NOI18N
+        saveFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveFileMenuItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(saveFileMenuItem);
 
         saveFileAsMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_A);
         saveFileAsMenuItem.setText(bundle.getString("saveFileAsMenuItem")); // NOI18N
+        saveFileAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveFileAsMenuItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(saveFileAsMenuItem);
         fileMenu.add(jSeparator3);
 
         exitMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_E);
         exitMenuItem.setText(bundle.getString("exitMenuItem")); // NOI18N
+        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitMenuItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(exitMenuItem);
 
         menuBar.add(fileMenu);
-
-        editMenu.setMnemonic(java.awt.event.KeyEvent.VK_E);
-        editMenu.setText(bundle.getString("editMenu")); // NOI18N
-
-        undoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
-        undoMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_U);
-        undoMenuItem.setText(bundle.getString("undoMenuItem")); // NOI18N
-        undoMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                undoMenuItemActionPerformed(evt);
-            }
-        });
-        editMenu.add(undoMenuItem);
-
-        redoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y, java.awt.event.InputEvent.CTRL_MASK));
-        redoMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_R);
-        redoMenuItem.setText(bundle.getString("redoMenuItem")); // NOI18N
-        editMenu.add(redoMenuItem);
-
-        menuBar.add(editMenu);
 
         manageMenu.setMnemonic(java.awt.event.KeyEvent.VK_M);
         manageMenu.setText(bundle.getString("manageMenu")); // NOI18N
@@ -340,10 +339,20 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
         updatePersonMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_U);
         updatePersonMenuItem.setText(bundle.getString("updatePersonMenuItem")); // NOI18N
+        updatePersonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updatePersonMenuItemActionPerformed(evt);
+            }
+        });
         manageMenu.add(updatePersonMenuItem);
 
         deletePersonMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_D);
         deletePersonMenuItem.setText(bundle.getString("deletePersonMenuItem")); // NOI18N
+        deletePersonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deletePersonMenuItemActionPerformed(evt);
+            }
+        });
         manageMenu.add(deletePersonMenuItem);
         manageMenu.add(jSeparator4);
 
@@ -423,17 +432,41 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void newFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileMenuItemActionPerformed
-        // TODO add your handling code here:
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization");
+        Object[] options = {bundle.getString("yes"),
+                            bundle.getString("no"),
+                            bundle.getString("cancelButton")};
+        int i = JOptionPane.showOptionDialog(this, bundle.getString("fileSave"), bundle.getString("treePanel"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        switch(i) {
+            case JOptionPane.YES_OPTION:
+                saveFileMenuItemActionPerformed(evt);
+            case JOptionPane.NO_OPTION:
+                newFamilyTree();
+                break;
+        }
     }//GEN-LAST:event_newFileMenuItemActionPerformed
 
     private void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileMenuItemActionPerformed
-        JFileChooser of = new JFileChooser();
-        of.showOpenDialog(this);
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization");
+        Object[] options = {bundle.getString("yes"),
+                            bundle.getString("no"),
+                            bundle.getString("cancelButton")};
+        int i = JOptionPane.showOptionDialog(this, bundle.getString("fileSave"), bundle.getString("treePanel"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        switch(i) {
+            case JOptionPane.YES_OPTION:
+                saveFileMenuItemActionPerformed(evt);
+            case JOptionPane.NO_OPTION:
+                JFileChooser fc = new JFileChooser();
+                int option = fc.showOpenDialog(this);
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    file = fc.getSelectedFile();
+                    updateGuiFromFile();
+                } else {
+                    //logger
+                }
+                break;
+        }
     }//GEN-LAST:event_openFileMenuItemActionPerformed
-
-    private void undoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoMenuItemActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_undoMenuItemActionPerformed
 
     private void createPersonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createPersonMenuItemActionPerformed
         PersonDialog pd = new PersonDialog(this, true, null, dataSource);
@@ -441,11 +474,48 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         updatePeopleTable();
     }//GEN-LAST:event_createPersonMenuItemActionPerformed
 
-    private PeopleListSwingWorker peopleListSwingWorker;
+    private void saveFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileMenuItemActionPerformed
+        if (file != null) {
+            saveFileAsMenuItemActionPerformed(evt);
+        } else {
+            JFileChooser fc = new JFileChooser();
+            fc.showSaveDialog(this);
+            file = fc.getSelectedFile();
+            saveFileAsMenuItemActionPerformed(evt);
+        }
+    }//GEN-LAST:event_saveFileMenuItemActionPerformed
+
+    private void saveFileAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileAsMenuItemActionPerformed
+        // TODO
+    }//GEN-LAST:event_saveFileAsMenuItemActionPerformed
+
+    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_exitMenuItemActionPerformed
+
+    private void updatePersonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updatePersonMenuItemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_updatePersonMenuItemActionPerformed
+
+    private void deletePersonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletePersonMenuItemActionPerformed
+        if(peopleTable.getSelectedRow() != -1) {
+            new DeletePersonSwingWorker().execute();
+            updatePeopleTable();
+        }
+    }//GEN-LAST:event_deletePersonMenuItemActionPerformed
 
     private void updatePeopleTable() {
         peopleListSwingWorker = new PeopleListSwingWorker();
         peopleListSwingWorker.execute();
+    }
+
+    private void newFamilyTree() {
+        file = null;
+        new DeleteDatabaseSwingWorker().execute();
+    }
+
+    private void updateGuiFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     private class PeopleListSwingWorker extends SwingWorker<List<Person>, Void> {
@@ -461,6 +531,8 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
                 model.removeRow(i);
             }
             try {
+                if(peopleList != null)
+                    peopleList.clear();
                 peopleList = get();
                 for(int i = 0; i < peopleList.size(); i++) {
                     Person p = peopleList.get(i);
@@ -473,6 +545,27 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             }
         }
     }
+    
+    private class DeleteDatabaseSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            new PeopleManagerImpl(dataSource).deleteAll();
+            return null;
+        }
+        
+    }
+    
+    private class DeletePersonSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            new PeopleManagerImpl(dataSource).deletePerson(peopleList.get(peopleTable.getSelectedRow()));
+            return null;
+        }
+        
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -516,7 +609,6 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem deleteMarriageMenuItem;
     private javax.swing.JMenuItem deletePersonMenuItem;
     private javax.swing.JMenuItem deleteRelationMenuItem;
-    private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem findMarriageMenuItem;
@@ -542,13 +634,11 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem openFileMenuItem;
     private javax.swing.JPanel peoplePanel;
     private javax.swing.JTable peopleTable;
-    private javax.swing.JMenuItem redoMenuItem;
     private javax.swing.JPanel relationsPanel;
     private javax.swing.JTable relationsTable;
     private javax.swing.JMenuItem saveFileAsMenuItem;
     private javax.swing.JMenuItem saveFileMenuItem;
     private javax.swing.JPanel treePanel;
-    private javax.swing.JMenuItem undoMenuItem;
     private javax.swing.JMenuItem updateMarriageMenuItem;
     private javax.swing.JMenuItem updatePersonMenuItem;
     // End of variables declaration//GEN-END:variables
