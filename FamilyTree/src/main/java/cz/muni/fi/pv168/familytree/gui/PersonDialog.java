@@ -10,7 +10,6 @@ import cz.muni.fi.pv168.familytree.PeopleManager;
 import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import cz.muni.fi.pv168.familytree.ServiceFailureException;
-import java.sql.SQLException;
 import javax.sql.DataSource;
 import javax.swing.JOptionPane;
 
@@ -204,38 +203,64 @@ public class PersonDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void validate(Person p) throws IllegalArgumentException {
+        
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
+        String please = bundle.getString("pleaseFill");
+        
+        if (p.getName().length() == 0) {
+            throw new IllegalArgumentException(please + bundle.getString("nameLabel"));
+        }
+        
+        if (p.getPlaceOfBirth().length() == 0) {
+            throw new IllegalArgumentException(please + bundle.getString("placeOfBirthLabel"));
+        }
+        
+        if (p.getDateOfBirth() == null) {
+            throw new IllegalArgumentException(please + bundle.getString("dateOfBirthLabel"));
+        }
+        
+        if ((p.getDateOfDeath() == null) != (p.getPlaceOfDeath().length() == 0)) {
+            throw new IllegalArgumentException(please + bundle.getString("bothDeath"));
+        }
+        
+        if (p.getDateOfDeath() != null && p.getDateOfBirth().isAfter(p.getDateOfDeath())) {
+            throw new IllegalArgumentException(bundle.getString("bornAfterDeath"));
+        }
+    }
+    
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         PeopleManager pManager = new PeopleManagerImpl(ds);
-        
+        Person p2 = null;
         try{
             if (p == null) {
-                p = new Person();
-                if(nameField.getText().length() != 0)
-                    p.setName(nameField.getText());
-                else
-                    p.setName(null);
+                p2 = new Person();
+                p2.setName(nameField.getText());
                 if(maleRadioButton.isSelected())
-                    p.setGender(GenderType.MAN);
+                    p2.setGender(GenderType.MAN);
                 else
-                    p.setGender(GenderType.WOMAN);
-                p.setPlaceOfBirth(placeOfBirthField.getText());
-                p.setDateOfBirth(new java.sql.Date(birthDateChooser.getDate().getTime()).toLocalDate());
-                if(placeOfDeathField.getText().length() != 0)
-                    p.setPlaceOfDeath(placeOfDeathField.getText());
-                else
-                    p.setPlaceOfDeath(null);
-                java.util.Date date = deathDateChooser.getDate();
-                p.setDateOfDeath(date != null ? new java.sql.Date(date.getTime()).toLocalDate() : null);
+                    p2.setGender(GenderType.WOMAN);
+                p2.setPlaceOfBirth(placeOfBirthField.getText());
+                java.util.Date date = birthDateChooser.getDate();
+                p2.setDateOfBirth(date != null ? new java.sql.Date(date.getTime()).toLocalDate() : null);
+                p2.setPlaceOfDeath(placeOfDeathField.getText());
+                
+                
+                
+                
+                
+                date = deathDateChooser.getDate();
+                p2.setDateOfDeath(date != null ? new java.sql.Date(date.getTime()).toLocalDate() : null);
                 
                 //<threadStuff>
-                PeopleManagerImpl.validate(p);
-                pManager.createPerson(p);
+                validate(p2);
+                pManager.createPerson(p2);
                 //</threadStuff>
             } else {
                 //<threadStuff>
-                PeopleManagerImpl.validate(p);
+                validate(p2);
             
-                pManager.updatePerson(p);
+                pManager.updatePerson(p2);
                 //</threadStuff>
             }
             this.setVisible(false);
