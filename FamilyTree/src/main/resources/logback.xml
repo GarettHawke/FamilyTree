@@ -1,32 +1,14 @@
 <configuration>
-    <contextName>mujprojekt</contextName>
- 
-    <if condition='isDefined("catalina.base")'>
-        <then>
-            <appender name="APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
-                <file>${catalina.base}/logs/${CONTEXT_NAME}.log</file>
-                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <fileNamePattern>${catalina.base}/logs/${CONTEXT_NAME}.log.%d{yyyy-MM-dd}</fileNamePattern>
-                </rollingPolicy>
-                <encoder>
-                    <!-- http://logback.qos.ch/manual/layouts.html#conversionWord -->
-                    <pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
-                </encoder>
-            </appender>
-        </then>
-        <else>
-            <appender name="APP" class="ch.qos.logback.core.ConsoleAppender">
-                <encoder>
-                    <pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
-                </encoder>
-            </appender>
-        </else>
-    </if>
- 
-    <logger name="cz.muni.fi.pv168" level="info"/>
+
+    <appender name="APP" class="ch.qos.logback.core.FileAppender">
+        <file>captains.log</file>
+        <encoder>
+            <pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
  
     <root level="info">
         <appender-ref ref="APP"/>
     </root>
- 
+  
 </configuration>
