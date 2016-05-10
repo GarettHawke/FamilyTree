@@ -5,6 +5,8 @@
  */
 package cz.muni.fi.pv168.familytree.gui;
 
+import javax.swing.JFileChooser;
+
 /**
  *
  * @author Peter
@@ -292,6 +294,11 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
         createPersonMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_P);
         createPersonMenuItem.setText(bundle.getString("createPersonMenuItem")); // NOI18N
+        createPersonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createPersonMenuItemActionPerformed(evt);
+            }
+        });
         manageMenu.add(createPersonMenuItem);
 
         updatePersonMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_U);
@@ -383,12 +390,18 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_newFileMenuItemActionPerformed
 
     private void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileMenuItemActionPerformed
-        // TODO add your handling code here:
+        JFileChooser of = new JFileChooser();
+        of.showOpenDialog(this);
     }//GEN-LAST:event_openFileMenuItemActionPerformed
 
     private void undoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoMenuItemActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_undoMenuItemActionPerformed
+
+    private void createPersonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createPersonMenuItemActionPerformed
+        PersonDialog pd = new PersonDialog(this, true);
+        pd.setVisible(true);
+    }//GEN-LAST:event_createPersonMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
