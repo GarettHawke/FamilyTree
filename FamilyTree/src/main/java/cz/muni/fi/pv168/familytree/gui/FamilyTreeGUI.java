@@ -10,6 +10,8 @@ import javax.swing.JFileChooser;
 
 import static cz.muni.fi.pv168.familytree.Main.createMemoryDatabase;
 import cz.muni.fi.pv168.familytree.Marriage;
+import cz.muni.fi.pv168.familytree.MarriageCatalogImpl;
+import cz.muni.fi.pv168.familytree.PeopleManager;
 import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import java.io.File;
@@ -35,8 +37,6 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     Map<Person, List<Person>> relationsMap;
     
     File file;
-    
-    private PeopleListSwingWorker peopleListSwingWorker;
 
     public DataSource getDataSource() {
         return dataSource;
@@ -359,11 +359,21 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         createMarriageMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_M);
         createMarriageMenuItem.setText(bundle.getString("createMarriageMenuItem")); // NOI18N
         createMarriageMenuItem.setActionCommand(bundle.getString("createMarriageMenuItem")); // NOI18N
+        createMarriageMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createMarriageMenuItemActionPerformed(evt);
+            }
+        });
         manageMenu.add(createMarriageMenuItem);
 
         updateMarriageMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_P);
         updateMarriageMenuItem.setText(bundle.getString("updateMarriageMenuItem")); // NOI18N
         updateMarriageMenuItem.setActionCommand(bundle.getString("updateMarriageMenuItem")); // NOI18N
+        updateMarriageMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateMarriageMenuItemActionPerformed(evt);
+            }
+        });
         manageMenu.add(updateMarriageMenuItem);
 
         deleteMarriageMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_E);
@@ -504,9 +514,28 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_deletePersonMenuItemActionPerformed
 
+    private void createMarriageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createMarriageMenuItemActionPerformed
+        if (peopleList == null || peopleList.size() < 2) {
+            JOptionPane.showMessageDialog(null, "Not enough people!", "Warning", JOptionPane.ERROR_MESSAGE);
+        } else {
+            MarriageDialog md = new MarriageDialog(this, true, dataSource, null);
+            md.setVisible(true);
+            updateMarriagesTable();
+        }
+    }//GEN-LAST:event_createMarriageMenuItemActionPerformed
+
+    private void updateMarriageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateMarriageMenuItemActionPerformed
+        if (marriagesTable.getSelectedRow() != -1) {
+            MarriageDialog md = new MarriageDialog(this, true, dataSource, marriagesList.get(marriagesTable.getSelectedRow()));
+            md.setVisible(true);
+            updateMarriagesTable();
+        } else {
+            JOptionPane.showMessageDialog(this, "No marriage selected!", "Warning", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_updateMarriageMenuItemActionPerformed
+
     private void updatePeopleTable() {
-        peopleListSwingWorker = new PeopleListSwingWorker();
-        peopleListSwingWorker.execute();
+        new PeopleListSwingWorker().execute();
     }
 
     private void newFamilyTree() {
@@ -516,6 +545,10 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
     private void updateGuiFromFile() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void updateMarriagesTable() {
+        new MarriagesListSwingWorker().execute();
     }
     
     private class PeopleListSwingWorker extends SwingWorker<List<Person>, Void> {
@@ -564,6 +597,36 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             return null;
         }
         
+    }
+    
+    private class MarriagesListSwingWorker extends SwingWorker<List<Marriage>, Void> {
+        @Override
+        protected List<Marriage> doInBackground() throws Exception {
+            MarriageCatalogImpl mc = new MarriageCatalogImpl(dataSource);
+            mc.setPeopleManager(new PeopleManagerImpl(dataSource));
+            return mc.findAllMarriages();
+        }
+        
+        @Override
+        protected void done() {
+            DefaultTableModel model = (DefaultTableModel) marriagesTable.getModel();
+            for(int i = 0;  i < model.getRowCount(); i++) {
+                model.removeRow(i);
+            }
+            try {
+                if(marriagesList != null)
+                    marriagesList.clear();
+                marriagesList = get();
+                for(int i = 0; i < marriagesList.size(); i++) {
+                    Marriage m = marriagesList.get(i);
+                    model.addRow(new Object[]{m.getSpouse1().getName(), m.getSpouse2().getName(), m.getFrom(), m.getTo()});
+                }
+            } catch(InterruptedException ex) {
+                //logger
+            } catch(ExecutionException ex) {
+                //logger
+            }
+        }
     }
     
     /**

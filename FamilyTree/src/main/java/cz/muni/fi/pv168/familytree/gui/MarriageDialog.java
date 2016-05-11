@@ -6,6 +6,15 @@
 package cz.muni.fi.pv168.familytree.gui;
 
 import cz.muni.fi.pv168.familytree.Marriage;
+import cz.muni.fi.pv168.familytree.MarriageCatalogImpl;
+import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
+import cz.muni.fi.pv168.familytree.Person;
+import cz.muni.fi.pv168.familytree.ServiceFailureException;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import javax.sql.DataSource;
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -13,12 +22,33 @@ import cz.muni.fi.pv168.familytree.Marriage;
  */
 public class MarriageDialog extends javax.swing.JDialog {
 
+    DataSource dataSource;
+    Marriage marriage;
+    List<Person> list;
     /**
      * Creates new form MarriageDialog
      */
     public MarriageDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+    }
+    
+    public MarriageDialog(java.awt.Frame parent, boolean modal, DataSource dataSource, Marriage marriage) {
+        this(parent, modal);
+        this.dataSource = dataSource;
+        this.marriage = marriage;
+        list = new PeopleManagerImpl(dataSource).findAllPeople();
+        for (Person person : list) {
+            spouse1ComboBox.addItem(person.getName());
+            spouse2ComboBox.addItem(person.getName());
+        }
+        if (marriage != null) {
+            spouse1ComboBox.setSelectedItem(marriage.getSpouse1().getName());
+            spouse2ComboBox.setSelectedItem(marriage.getSpouse2().getName());
+            fromDateChooser.setDate(java.sql.Date.valueOf(marriage.getFrom()));
+            if (marriage.getTo() != null)
+                toDateChooser.setDate(java.sql.Date.valueOf(marriage.getTo()));
+        }
     }
 
     /**
@@ -144,13 +174,119 @@ public class MarriageDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        // TODO add your handling code here:
+        Marriage marriage = new Marriage();
+        try {
+            marriage.setSpouse1(list.get(spouse1ComboBox.getSelectedIndex()));
+            marriage.setSpouse2(list.get(spouse2ComboBox.getSelectedIndex()));
+            java.util.Date date = fromDateChooser.getDate();
+            marriage.setFrom(date != null ? new java.sql.Date(date.getTime()).toLocalDate() : null);
+            date = toDateChooser.getDate();
+            marriage.setTo(date != null ? new java.sql.Date(date.getTime()).toLocalDate() : null);
+            validateMarriage(marriage);
+            if (this.marriage == null) {
+                //create
+                this.marriage = marriage;
+                new createMarriageSwingWorker().execute();
+            } else {
+                //update
+                marriage.setId(this.marriage.getId());
+                this.marriage = marriage;
+                new updateMarriageSwingWorker().execute();
+            }
+            setVisible(false);
+        } catch(IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), java.util.ResourceBundle.getBundle("localization").getString("warning"), JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        Marriage marriage = new Marriage();
+        setVisible(false);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    private void validateMarriage(Marriage marriage) {
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
+        
+        if (marriage.getFrom() == null) {
+            throw new IllegalArgumentException(bundle.getString("marriageFromNull"));
+        }
+        if(marriage.getSpouse1().equals(marriage.getSpouse2())) {
+            throw new IllegalArgumentException(bundle.getString("sameSpouses"));
+        }
+        if(marriage.getSpouse1().getDateOfBirth().isAfter(marriage.getFrom().minusYears(MarriageCatalogImpl.ACCEPTED_AGE_FOR_MARRIAGE))) {
+            throw new IllegalArgumentException(bundle.getString("spouseTooYoung") + "(1)");
+        }
+        if(marriage.getSpouse2().getDateOfBirth().isAfter(marriage.getFrom().minusYears(MarriageCatalogImpl.ACCEPTED_AGE_FOR_MARRIAGE))) {
+            throw new IllegalArgumentException(bundle.getString("spouseTooYoung") + "(2)");
+        }
+        if(marriage.getSpouse1().getDateOfDeath() != null
+                && marriage.getSpouse1().getDateOfDeath().isBefore(marriage.getFrom())) {
+            throw new IllegalArgumentException(bundle.getString("spouseDead") + "(1)");
+        }
+        if(marriage.getSpouse2().getDateOfDeath() != null
+                && marriage.getSpouse2().getDateOfDeath().isBefore(marriage.getFrom())) {
+            throw new IllegalArgumentException(bundle.getString("spouseDead") + "(2)");
+        }
+        if(marriage.getTo() != null && marriage.getTo().isBefore(marriage.getFrom())) {
+            throw new IllegalArgumentException(bundle.getString("toFromDates"));
+        }
+    }
+    
+    private class createMarriageSwingWorker extends SwingWorker<Integer, Void> {
+
+        @Override
+        protected Integer doInBackground() throws Exception {
+            try {
+                new MarriageCatalogImpl(dataSource).createMarriage(marriage);
+                return 0;
+            } catch(ServiceFailureException ex) {
+                //logger
+                return 1;
+            }
+        }
+        
+        @Override
+        protected void done() {
+            try {
+                if (get() == 1) {
+                    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
+                    JOptionPane.showMessageDialog(null, bundle.getString("createMarriageFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+                }
+            } catch(InterruptedException ex) {
+                //logger
+            } catch(ExecutionException ex) {
+                //logger
+            }
+        }
+    }
+    
+    private class updateMarriageSwingWorker extends SwingWorker<Integer, Void> {
+
+        @Override
+        protected Integer doInBackground() throws Exception {
+            try {
+                new MarriageCatalogImpl(dataSource).updateMarriage(marriage);
+                return 0;
+            } catch(ServiceFailureException ex) {
+                //logger
+                return 1;
+            }
+        }
+        
+        @Override
+        protected void done() {
+            try {
+                if (get() == 1) {
+                    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
+                    JOptionPane.showMessageDialog(null, bundle.getString("updateMarriageFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+                }
+            } catch(InterruptedException ex) {
+                //logger
+            } catch(ExecutionException ex) {
+                //logger
+            }
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */

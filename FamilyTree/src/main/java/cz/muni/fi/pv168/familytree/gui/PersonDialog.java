@@ -220,7 +220,7 @@ public class PersonDialog extends javax.swing.JDialog {
             throw new IllegalArgumentException(please + bundle.getString("dateOfBirthLabel"));
         }
         
-        if ((p.getDateOfDeath() == null) != (p.getPlaceOfDeath().length() == 0)) {
+        if ((p.getDateOfDeath() == null) != (p.getPlaceOfDeath() == null)) {
             throw new IllegalArgumentException(please + bundle.getString("bothDeath"));
         }
         
@@ -243,7 +243,7 @@ public class PersonDialog extends javax.swing.JDialog {
                 p2.setPlaceOfBirth(placeOfBirthField.getText());
                 java.util.Date date = birthDateChooser.getDate();
                 p2.setDateOfBirth(date != null ? new java.sql.Date(date.getTime()).toLocalDate() : null);
-                p2.setPlaceOfDeath(placeOfDeathField.getText());
+                p2.setPlaceOfDeath(!placeOfDeathField.getText().isEmpty() ? placeOfDeathField.getText() : null);
                 
                 
                 

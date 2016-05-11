@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 
 public class MarriageCatalogImpl implements MarriageCatalog {
     
-    private static final long ACCEPTED_AGE_FOR_MARRIAGE = 16;
+    public static final long ACCEPTED_AGE_FOR_MARRIAGE = 16;
     private final DataSource dataSource;
     private PeopleManager manager;
     
