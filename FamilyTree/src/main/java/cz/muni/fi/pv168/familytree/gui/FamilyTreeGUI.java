@@ -30,13 +30,13 @@ import javax.swing.table.DefaultTableModel;
  */
 public class FamilyTreeGUI extends javax.swing.JFrame {
 
-    DataSource dataSource;
+    private DataSource dataSource;
     
-    List<Person> peopleList;
-    List<Marriage>  marriagesList;
-    Map<Person, List<Person>> relationsMap;
+    private List<Person> peopleList;
+    private List<Marriage>  marriagesList;
+    private Map<Person, List<Person>> relationsMap;
     
-    File file;
+    private File file;
 
     public DataSource getDataSource() {
         return dataSource;
@@ -479,7 +479,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_openFileMenuItemActionPerformed
 
     private void createPersonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createPersonMenuItemActionPerformed
-        PersonDialog pd = new PersonDialog(this, true, null, dataSource);
+        PersonDialog pd = new PersonDialog(this, true, dataSource, null);
         pd.setVisible(true);
         updatePeopleTable();
     }//GEN-LAST:event_createPersonMenuItemActionPerformed
@@ -504,7 +504,14 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void updatePersonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updatePersonMenuItemActionPerformed
-        // TODO add your handling code here:
+        if(peopleTable.getSelectedRow() != -1) {
+            PersonDialog pd = new PersonDialog(this, true, dataSource, peopleList.get(peopleTable.getSelectedRow()));
+            pd.setVisible(true);
+            updatePeopleTable();
+        } else {
+            //log
+            JOptionPane.showMessageDialog(this, "No person selected!", "Warning", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_updatePersonMenuItemActionPerformed
 
     private void deletePersonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletePersonMenuItemActionPerformed

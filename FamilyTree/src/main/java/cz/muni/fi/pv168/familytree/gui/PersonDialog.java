@@ -32,10 +32,22 @@ public class PersonDialog extends javax.swing.JDialog {
         initComponents();
     }
 
-    public PersonDialog(java.awt.Frame parent, boolean modal, Person p, DataSource ds) {
+    public PersonDialog(java.awt.Frame parent, boolean modal, DataSource ds, Person p) {
         this(parent, modal);
-        this.p = p;
         this.ds = ds;
+        this.p = p;
+        if (p == null) {
+            return;
+        }
+        nameField.setText(p.getName());
+        birthDateChooser.setDate(java.sql.Date.valueOf(p.getDateOfBirth()));
+        placeOfBirthField.setText(p.getPlaceOfBirth());
+        if (p.getDateOfDeath() != null) {
+            deathDateChooser.setDate(java.sql.Date.valueOf(p.getDateOfDeath()));
+        }
+        if (p.getPlaceOfDeath() != null) {
+            placeOfDeathField.setText(p.getPlaceOfDeath());
+        }
     }
 
     /**
@@ -212,7 +224,7 @@ public class PersonDialog extends javax.swing.JDialog {
             throw new IllegalArgumentException(please + bundle.getString("nameLabel"));
         }
         
-        if (p.getPlaceOfBirth().length() == 0) {
+        if (p.getPlaceOfBirth().isEmpty()) {
             throw new IllegalArgumentException(please + bundle.getString("placeOfBirthLabel"));
         }
         
@@ -231,40 +243,39 @@ public class PersonDialog extends javax.swing.JDialog {
     
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         PeopleManager pManager = new PeopleManagerImpl(ds);
-        Person p2 = null;
         try{
+            Person p2 = new Person();
+            p2.setName(nameField.getText());
+            if(maleRadioButton.isSelected())
+                p2.setGender(GenderType.MAN);
+            else
+                p2.setGender(GenderType.WOMAN);
+
+            p2.setPlaceOfBirth(placeOfBirthField.getText());
+            java.util.Date date = birthDateChooser.getDate();
+            p2.setDateOfBirth(date != null ? new java.sql.Date(date.getTime()).toLocalDate() : null);
+
+            p2.setPlaceOfDeath( !placeOfDeathField.getText().isEmpty() ?  placeOfDeathField.getText() : null);
+            date = deathDateChooser.getDate();
+            p2.setDateOfDeath(date != null ? new java.sql.Date(date.getTime()).toLocalDate() : null);
+            
+            validate(p2);
+            
             if (p == null) {
-                p2 = new Person();
-                p2.setName(nameField.getText());
-                if(maleRadioButton.isSelected())
-                    p2.setGender(GenderType.MAN);
-                else
-                    p2.setGender(GenderType.WOMAN);
-                p2.setPlaceOfBirth(placeOfBirthField.getText());
-                java.util.Date date = birthDateChooser.getDate();
-                p2.setDateOfBirth(date != null ? new java.sql.Date(date.getTime()).toLocalDate() : null);
-                p2.setPlaceOfDeath(!placeOfDeathField.getText().isEmpty() ? placeOfDeathField.getText() : null);
-                
-                
-                
-                
-                
-                date = deathDateChooser.getDate();
-                p2.setDateOfDeath(date != null ? new java.sql.Date(date.getTime()).toLocalDate() : null);
-                
+                //log
                 //<threadStuff>
-                validate(p2);
                 pManager.createPerson(p2);
                 //</threadStuff>
             } else {
+                p2.setId(p.getId());
+                //log
                 //<threadStuff>
-                validate(p2);
-            
                 pManager.updatePerson(p2);
                 //</threadStuff>
             }
             this.setVisible(false);
         } catch (IllegalArgumentException ex) {
+            //log
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         } catch (ServiceFailureException ex) {
             //log
