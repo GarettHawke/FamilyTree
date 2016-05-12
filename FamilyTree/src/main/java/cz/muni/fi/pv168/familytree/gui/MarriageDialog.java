@@ -22,21 +22,26 @@ import javax.swing.SwingWorker;
  */
 public class MarriageDialog extends javax.swing.JDialog {
 
-    DataSource dataSource;
-    Marriage marriage;
-    List<Person> list;
+    private DataSource dataSource;
+    private Marriage marriage;
+    private List<Person> list;
+    private java.util.ResourceBundle bundle;
+    
     /**
      * Creates new form MarriageDialog
+     * @param parent
+     * @param modal
      */
     public MarriageDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
     
-    public MarriageDialog(java.awt.Frame parent, boolean modal, DataSource dataSource, Marriage marriage) {
+    public MarriageDialog(java.awt.Frame parent, boolean modal, DataSource dataSource, Marriage marriage, java.util.ResourceBundle bundle) {
         this(parent, modal);
         this.dataSource = dataSource;
         this.marriage = marriage;
+        this.bundle = bundle;
         list = new PeopleManagerImpl(dataSource).findAllPeople();
         for (Person person : list) {
             spouse1ComboBox.addItem(person.getName());
@@ -195,7 +200,8 @@ public class MarriageDialog extends javax.swing.JDialog {
             }
             setVisible(false);
         } catch(IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), java.util.ResourceBundle.getBundle("localization").getString("warning"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
+            //log
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -204,7 +210,6 @@ public class MarriageDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void validateMarriage(Marriage marriage) {
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
         
         if (marriage.getFrom() == null) {
             throw new IllegalArgumentException(bundle.getString("marriageFromNull"));
@@ -237,9 +242,10 @@ public class MarriageDialog extends javax.swing.JDialog {
         protected Integer doInBackground() throws Exception {
             try {
                 new MarriageCatalogImpl(dataSource).createMarriage(marriage);
+                //log
                 return 0;
             } catch(ServiceFailureException ex) {
-                //logger
+                //log
                 return 1;
             }
         }
@@ -248,12 +254,10 @@ public class MarriageDialog extends javax.swing.JDialog {
         protected void done() {
             try {
                 if (get() == 1) {
-                    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
                     JOptionPane.showMessageDialog(null, bundle.getString("createMarriageFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+                    //log
                 }
-            } catch(InterruptedException ex) {
-                //logger
-            } catch(ExecutionException ex) {
+            } catch(InterruptedException | ExecutionException ex) {
                 //logger
             }
         }
@@ -265,9 +269,10 @@ public class MarriageDialog extends javax.swing.JDialog {
         protected Integer doInBackground() throws Exception {
             try {
                 new MarriageCatalogImpl(dataSource).updateMarriage(marriage);
+                //log
                 return 0;
             } catch(ServiceFailureException ex) {
-                //logger
+                //log
                 return 1;
             }
         }
@@ -276,13 +281,11 @@ public class MarriageDialog extends javax.swing.JDialog {
         protected void done() {
             try {
                 if (get() == 1) {
-                    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
                     JOptionPane.showMessageDialog(null, bundle.getString("updateMarriageFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+                    //log
                 }
-            } catch(InterruptedException ex) {
-                //logger
-            } catch(ExecutionException ex) {
-                //logger
+            } catch(InterruptedException | ExecutionException ex) {
+                //log
             }
         }
     }

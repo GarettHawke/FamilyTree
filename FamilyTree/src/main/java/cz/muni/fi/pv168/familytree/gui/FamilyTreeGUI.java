@@ -11,7 +11,6 @@ import javax.swing.JFileChooser;
 import static cz.muni.fi.pv168.familytree.Main.createMemoryDatabase;
 import cz.muni.fi.pv168.familytree.Marriage;
 import cz.muni.fi.pv168.familytree.MarriageCatalogImpl;
-import cz.muni.fi.pv168.familytree.PeopleManager;
 import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import java.io.File;
@@ -35,7 +34,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     private List<Person> peopleList;
     private List<Marriage>  marriagesList;
     private Map<Person, List<Person>> relationsMap;
-    
+    private java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization");
     private File file;
 
     public DataSource getDataSource() {
@@ -49,10 +48,8 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         initComponents();
         try {
             dataSource = createMemoryDatabase();
-        } catch(SQLException ex) {
-            //logger
-        } catch(IOException ex) {
-            //logger
+        } catch(SQLException | IOException ex) {
+            //log
         }
         file = null;
     }
@@ -442,7 +439,6 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void newFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileMenuItemActionPerformed
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization");
         Object[] options = {bundle.getString("yes"),
                             bundle.getString("no"),
                             bundle.getString("cancelButton")};
@@ -452,12 +448,12 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
                 saveFileMenuItemActionPerformed(evt);
             case JOptionPane.NO_OPTION:
                 newFamilyTree();
+                //log
                 break;
         }
     }//GEN-LAST:event_newFileMenuItemActionPerformed
 
     private void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileMenuItemActionPerformed
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization");
         Object[] options = {bundle.getString("yes"),
                             bundle.getString("no"),
                             bundle.getString("cancelButton")};
@@ -471,15 +467,17 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
                 if (option == JFileChooser.APPROVE_OPTION) {
                     file = fc.getSelectedFile();
                     updateGuiFromFile();
+                    //log
                 } else {
-                    //logger
+                    //say something
+                    //log
                 }
                 break;
         }
     }//GEN-LAST:event_openFileMenuItemActionPerformed
 
     private void createPersonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createPersonMenuItemActionPerformed
-        PersonDialog pd = new PersonDialog(this, true, dataSource, null);
+        PersonDialog pd = new PersonDialog(this, true, dataSource, null, bundle);
         pd.setVisible(true);
         updatePeopleTable();
     }//GEN-LAST:event_createPersonMenuItemActionPerformed
@@ -497,20 +495,22 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
     private void saveFileAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileAsMenuItemActionPerformed
         // TODO
+        //log
     }//GEN-LAST:event_saveFileAsMenuItemActionPerformed
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
+        //log
         System.exit(0);
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void updatePersonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updatePersonMenuItemActionPerformed
         if(peopleTable.getSelectedRow() != -1) {
-            PersonDialog pd = new PersonDialog(this, true, dataSource, peopleList.get(peopleTable.getSelectedRow()));
+            PersonDialog pd = new PersonDialog(this, true, dataSource, peopleList.get(peopleTable.getSelectedRow()), bundle);
             pd.setVisible(true);
             updatePeopleTable();
         } else {
             //log
-            JOptionPane.showMessageDialog(this, "No person selected!", "Warning", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, bundle.getString("noPersonSelected"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_updatePersonMenuItemActionPerformed
 
@@ -523,9 +523,10 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
     private void createMarriageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createMarriageMenuItemActionPerformed
         if (peopleList == null || peopleList.size() < 2) {
-            JOptionPane.showMessageDialog(null, "Not enough people!", "Warning", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, bundle.getString("notEnoughPeople"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
+            //log
         } else {
-            MarriageDialog md = new MarriageDialog(this, true, dataSource, null);
+            MarriageDialog md = new MarriageDialog(this, true, dataSource, null, bundle);
             md.setVisible(true);
             updateMarriagesTable();
         }
@@ -533,11 +534,12 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
     private void updateMarriageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateMarriageMenuItemActionPerformed
         if (marriagesTable.getSelectedRow() != -1) {
-            MarriageDialog md = new MarriageDialog(this, true, dataSource, marriagesList.get(marriagesTable.getSelectedRow()));
+            MarriageDialog md = new MarriageDialog(this, true, dataSource, marriagesList.get(marriagesTable.getSelectedRow()), bundle);
             md.setVisible(true);
             updateMarriagesTable();
         } else {
-            JOptionPane.showMessageDialog(this, "No marriage selected!", "Warning", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, bundle.getString("oMarriageSelected"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
+            //log
         }
     }//GEN-LAST:event_updateMarriageMenuItemActionPerformed
 
@@ -578,10 +580,9 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
                     Person p = peopleList.get(i);
                     model.addRow(new Object[]{p.getName(), p.getGender(), p.getDateOfBirth(), p.getPlaceOfBirth(), p.getDateOfDeath(), p.getPlaceOfDeath()});
                 }
-            } catch(InterruptedException ex) {
-                //logger
-            } catch(ExecutionException ex) {
-                //logger
+                //log
+            } catch(InterruptedException | ExecutionException ex) {
+                //log
             }
         }
     }
@@ -591,6 +592,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         @Override
         protected Void doInBackground() throws Exception {
             new PeopleManagerImpl(dataSource).deleteAll();
+            //log
             return null;
         }
         
@@ -601,6 +603,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         @Override
         protected Void doInBackground() throws Exception {
             new PeopleManagerImpl(dataSource).deletePerson(peopleList.get(peopleTable.getSelectedRow()));
+            //log
             return null;
         }
         
@@ -628,10 +631,9 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
                     Marriage m = marriagesList.get(i);
                     model.addRow(new Object[]{m.getSpouse1().getName(), m.getSpouse2().getName(), m.getFrom(), m.getTo()});
                 }
-            } catch(InterruptedException ex) {
-                //logger
-            } catch(ExecutionException ex) {
-                //logger
+                //log
+            } catch(InterruptedException | ExecutionException ex) {
+                //log
             }
         }
     }

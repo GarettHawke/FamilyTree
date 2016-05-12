@@ -6,12 +6,13 @@
 package cz.muni.fi.pv168.familytree.gui;
 
 import cz.muni.fi.pv168.familytree.GenderType;
-import cz.muni.fi.pv168.familytree.PeopleManager;
 import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import cz.muni.fi.pv168.familytree.ServiceFailureException;
+import java.util.concurrent.ExecutionException;
 import javax.sql.DataSource;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -21,6 +22,7 @@ public class PersonDialog extends javax.swing.JDialog {
     
     private Person p;
     private DataSource ds;
+    private java.util.ResourceBundle bundle;
 
     /**
      * Creates new form PersonDialog
@@ -32,10 +34,11 @@ public class PersonDialog extends javax.swing.JDialog {
         initComponents();
     }
 
-    public PersonDialog(java.awt.Frame parent, boolean modal, DataSource ds, Person p) {
+    public PersonDialog(java.awt.Frame parent, boolean modal, DataSource ds, Person p, java.util.ResourceBundle bundle) {
         this(parent, modal);
         this.ds = ds;
         this.p = p;
+        this.bundle = bundle;
         if (p == null) {
             return;
         }
@@ -217,7 +220,6 @@ public class PersonDialog extends javax.swing.JDialog {
 
     private void validate(Person p) throws IllegalArgumentException {
         
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
         String please = bundle.getString("pleaseFill");
         
         if (p.getName().length() == 0) {
@@ -242,7 +244,6 @@ public class PersonDialog extends javax.swing.JDialog {
     }
     
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        PeopleManager pManager = new PeopleManagerImpl(ds);
         try{
             Person p2 = new Person();
             p2.setName(nameField.getText());
@@ -262,26 +263,76 @@ public class PersonDialog extends javax.swing.JDialog {
             validate(p2);
             
             if (p == null) {
-                //log
-                //<threadStuff>
-                pManager.createPerson(p2);
-                //</threadStuff>
+                p = p2;
+                new createPersonSwingWorker().execute();
             } else {
                 p2.setId(p.getId());
-                //log
-                //<threadStuff>
-                pManager.updatePerson(p2);
-                //</threadStuff>
+                p = p2;
+                new updatePersonSwingWorker().execute();
             }
             this.setVisible(false);
         } catch (IllegalArgumentException ex) {
             //log
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
         } catch (ServiceFailureException ex) {
             //log
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
+    private class createPersonSwingWorker extends SwingWorker<Boolean, Void> {
+
+        @Override
+        protected Boolean doInBackground() throws Exception {
+            try {
+                new PeopleManagerImpl(ds).createPerson(p);
+                //log
+                return false;
+            } catch(ServiceFailureException ex) {
+                //log
+                return true;
+            }
+        }
+        
+        @Override
+        protected void done() {
+            try {
+                if (get()) {
+                    JOptionPane.showMessageDialog(null, bundle.getString("createPersonFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+                    //log
+                }
+            } catch(InterruptedException | ExecutionException ex) {
+                //log
+            }
+        }
+    }
+    
+    private class updatePersonSwingWorker extends SwingWorker<Boolean, Void> {
+
+        @Override
+        protected Boolean doInBackground() throws Exception {
+            try {
+                new PeopleManagerImpl(ds).updatePerson(p);
+                //log
+                return false;
+            } catch(ServiceFailureException ex) {
+                //log
+                return true;
+            }
+        }
+        
+        @Override
+        protected void done() {
+            try {
+                if (get()) {
+                    JOptionPane.showMessageDialog(null, bundle.getString("updatePersonFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+                    //log
+                }
+            } catch(InterruptedException | ExecutionException ex) {
+                //log
+            }
+        }
+    }
+    
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.setVisible(false);
     }//GEN-LAST:event_cancelButtonActionPerformed
@@ -314,17 +365,15 @@ public class PersonDialog extends javax.swing.JDialog {
         //</editor-fold>
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                PersonDialog dialog = new PersonDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            PersonDialog dialog = new PersonDialog(new javax.swing.JFrame(), true);
+            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    System.exit(0);
+                }
+            });
+            dialog.setVisible(true);
         });
     }
 
