@@ -219,25 +219,19 @@ public class PersonDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void validate(Person p) throws IllegalArgumentException {
-        
         String please = bundle.getString("pleaseFill");
-        
         if (p.getName().length() == 0) {
             throw new IllegalArgumentException(please + bundle.getString("nameLabel"));
         }
-        
         if (p.getPlaceOfBirth().isEmpty()) {
             throw new IllegalArgumentException(please + bundle.getString("placeOfBirthLabel"));
         }
-        
         if (p.getDateOfBirth() == null) {
             throw new IllegalArgumentException(please + bundle.getString("dateOfBirthLabel"));
         }
-        
         if ((p.getDateOfDeath() == null) != (p.getPlaceOfDeath() == null)) {
             throw new IllegalArgumentException(please + bundle.getString("bothDeath"));
         }
-        
         if (p.getDateOfDeath() != null && p.getDateOfBirth().isAfter(p.getDateOfDeath())) {
             throw new IllegalArgumentException(bundle.getString("bornAfterDeath"));
         }

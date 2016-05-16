@@ -250,7 +250,7 @@ public class MarriageDialog extends javax.swing.JDialog {
                 new MarriageCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).createMarriage(marriage);
                 //log
                 return false;
-            } catch(ServiceFailureException ex) {
+            } catch(ServiceFailureException | IllegalArgumentException ex) {
                 //log
                 return true;
             }
@@ -279,7 +279,7 @@ public class MarriageDialog extends javax.swing.JDialog {
                 new MarriageCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).updateMarriage(marriage);
                 //log
                 return 0;
-            } catch(ServiceFailureException ex) {
+            } catch(ServiceFailureException | IllegalArgumentException ex) {
                 //log
                 return 1;
             }
