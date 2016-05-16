@@ -13,12 +13,17 @@ import javax.sql.DataSource;
 
 public class RelationCatalogImpl implements RelationCatalog {
     
-    private static final long ACCEPTED_AGE_FOR_PARENTS = 5;
+    public static final long ACCEPTED_AGE_FOR_PARENTS = 5;
     private final DataSource dataSource;
     private PeopleManager manager;
     
     public RelationCatalogImpl(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+    
+    public RelationCatalogImpl(DataSource dataSource, PeopleManager manager) {
+        this.dataSource = dataSource;
+        this.manager = manager;
     }
     
     @Override

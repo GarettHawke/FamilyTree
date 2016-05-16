@@ -30,13 +30,14 @@ import javax.swing.table.DefaultTableModel;
 public class FamilyTreeGUI extends javax.swing.JFrame {
 
     private DataSource dataSource;
+    private java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization");
+    private File file;
+    private boolean change;
     
     private List<Person> peopleList;
     private List<Marriage>  marriagesList;
     private Map<Person, List<Person>> relationsMap;
-    private java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization");
-    private File file;
-
+    
     public DataSource getDataSource() {
         return dataSource;
     }
@@ -527,6 +528,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             //log
         } else {
             MarriageDialog md = new MarriageDialog(this, true, dataSource, null, bundle);
+            md.setTitle(bundle.getString("createPersonMenuItem"));
             md.setVisible(true);
             updateMarriagesTable();
         }
@@ -535,10 +537,11 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     private void updateMarriageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateMarriageMenuItemActionPerformed
         if (marriagesTable.getSelectedRow() != -1) {
             MarriageDialog md = new MarriageDialog(this, true, dataSource, marriagesList.get(marriagesTable.getSelectedRow()), bundle);
+            md.setTitle(bundle.getString("updatePersonMenuItem"));
             md.setVisible(true);
             updateMarriagesTable();
         } else {
-            JOptionPane.showMessageDialog(this, bundle.getString("oMarriageSelected"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, bundle.getString("noMarriageSelected"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
             //log
         }
     }//GEN-LAST:event_updateMarriageMenuItemActionPerformed

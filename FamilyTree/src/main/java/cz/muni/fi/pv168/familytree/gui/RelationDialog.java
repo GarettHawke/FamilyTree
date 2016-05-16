@@ -5,18 +5,43 @@
  */
 package cz.muni.fi.pv168.familytree.gui;
 
+import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
+import cz.muni.fi.pv168.familytree.Person;
+import cz.muni.fi.pv168.familytree.RelationCatalogImpl;
+import cz.muni.fi.pv168.familytree.ServiceFailureException;
+import java.util.List;
+import javax.sql.DataSource;
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
+
 /**
  *
  * @author brani
  */
 public class RelationDialog extends javax.swing.JDialog {
 
+    private DataSource datasource;
+    private List<Person> list;
+    private Person parent;
+    private Person child;
     /**
      * Creates new form RelationDialog
      */
     public RelationDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+    }
+    
+    public RelationDialog(java.awt.Frame parent, boolean modal, DataSource datasource) {
+        super(parent, modal);
+        initComponents();
+        this.datasource = datasource;
+        //SWINGWORKER
+        list = new PeopleManagerImpl(datasource).findAllPeople();
+        for (Person p : list) {
+            parentComboBox.addItem(p.getName());
+            childComboBox.addItem(p.getName());
+        }
     }
 
     /**
@@ -28,15 +53,14 @@ public class RelationDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        varLabelsPanel = new javax.swing.JPanel();
+        JPanel = new javax.swing.JPanel();
         parentLabel = new javax.swing.JLabel();
         childLabel = new javax.swing.JLabel();
-        varInputPanel = new javax.swing.JPanel();
+        buttonsSplitPane = new javax.swing.JSplitPane();
+        cancelButton = new javax.swing.JButton();
+        okButton = new javax.swing.JButton();
         parentComboBox = new javax.swing.JComboBox<>();
         childComboBox = new javax.swing.JComboBox<>();
-        buttonsSplitPane = new javax.swing.JSplitPane();
-        okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -46,88 +70,137 @@ public class RelationDialog extends javax.swing.JDialog {
 
         childLabel.setText(bundle.getString("childLabel")); // NOI18N
 
-        javax.swing.GroupLayout varLabelsPanelLayout = new javax.swing.GroupLayout(varLabelsPanel);
-        varLabelsPanel.setLayout(varLabelsPanelLayout);
-        varLabelsPanelLayout.setHorizontalGroup(
-            varLabelsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(varLabelsPanelLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(varLabelsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(childLabel, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(parentLabel, javax.swing.GroupLayout.Alignment.TRAILING)))
-        );
-        varLabelsPanelLayout.setVerticalGroup(
-            varLabelsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(varLabelsPanelLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(parentLabel)
-                .addGap(15, 15, 15)
-                .addComponent(childLabel)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-
-        parentComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        childComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        javax.swing.GroupLayout varInputPanelLayout = new javax.swing.GroupLayout(varInputPanel);
-        varInputPanel.setLayout(varInputPanelLayout);
-        varInputPanelLayout.setHorizontalGroup(
-            varInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(varInputPanelLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(varInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(parentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(childComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(15, Short.MAX_VALUE))
-        );
-        varInputPanelLayout.setVerticalGroup(
-            varInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(varInputPanelLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(parentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(childComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
         buttonsSplitPane.setBorder(null);
         buttonsSplitPane.setDividerSize(0);
 
+        cancelButton.setText(bundle.getString("cancelButton")); // NOI18N
+        cancelButton.setPreferredSize(new java.awt.Dimension(70, 32));
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+        buttonsSplitPane.setRightComponent(cancelButton);
+
         okButton.setText(bundle.getString("okButton")); // NOI18N
+        okButton.setPreferredSize(new java.awt.Dimension(70, 32));
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
         buttonsSplitPane.setLeftComponent(okButton);
 
-        cancelButton.setText(bundle.getString("cancelButton")); // NOI18N
-        buttonsSplitPane.setRightComponent(cancelButton);
+        javax.swing.GroupLayout JPanelLayout = new javax.swing.GroupLayout(JPanel);
+        JPanel.setLayout(JPanelLayout);
+        JPanelLayout.setHorizontalGroup(
+            JPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(JPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(JPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(JPanelLayout.createSequentialGroup()
+                        .addGroup(JPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(childLabel, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(parentLabel, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(18, 18, 18)
+                        .addGroup(JPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(parentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(childComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(JPanelLayout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(buttonsSplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        JPanelLayout.setVerticalGroup(
+            JPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(JPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(JPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(parentLabel)
+                    .addComponent(parentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(JPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(childComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(childLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(buttonsSplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(buttonsSplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(varLabelsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10, 10, 10)
-                        .addComponent(varInputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(10, 10, 10))
+                .addContainerGap()
+                .addComponent(JPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(varInputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(varLabelsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10)
-                .addComponent(buttonsSplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(JPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        try {
+            parent = list.get(parentComboBox.getSelectedIndex());
+            child = list.get(childComboBox.getSelectedIndex());
+            validateRelation(parent, child);
+            new createRelationSwingWorker().execute();
+            setVisible(false);
+        } catch(IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), java.util.ResourceBundle.getBundle("localization").getString("warning"), JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_okButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        setVisible(false);
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void validateRelation(Person parent, Person child) {
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
+        
+        if(parent.equals(child)) {
+            throw new IllegalArgumentException(bundle.getString("parentIsChild"));
+        }
+        if(parent.getDateOfBirth().isAfter(child.getDateOfBirth())) {
+            throw new IllegalArgumentException(bundle.getString("parentYounger"));
+        }
+        if(parent.getDateOfBirth().isAfter(child.getDateOfBirth().minusYears(RelationCatalogImpl.ACCEPTED_AGE_FOR_PARENTS))) {
+            throw new IllegalArgumentException(bundle.getString("parentTooYoung"));
+        }
+        //SWINGWORKER !!!!!!
+        List<Person> parents = new RelationCatalogImpl(datasource).findParents(child);
+        if(parents.size() == 2) {
+            throw new IllegalArgumentException(bundle.getString("childParents"));
+        }
+        if(parents.contains(parent)) {
+            throw new IllegalArgumentException(bundle.getString("relationExist"));
+        }
+    }
+    
+    private class createRelationSwingWorker extends SwingWorker<Integer, Void> {
+
+        @Override
+        protected Integer doInBackground() throws Exception {
+            try {
+                new RelationCatalogImpl(datasource).makeRelation(parent, child);
+                //logger
+                return 0;
+            } catch(ServiceFailureException ex) {
+                //logger
+                return 1;
+            }
+        }
+        
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -171,6 +244,7 @@ public class RelationDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel JPanel;
     private javax.swing.JSplitPane buttonsSplitPane;
     private javax.swing.JButton cancelButton;
     private javax.swing.JComboBox<String> childComboBox;
@@ -178,7 +252,5 @@ public class RelationDialog extends javax.swing.JDialog {
     private javax.swing.JButton okButton;
     private javax.swing.JComboBox<String> parentComboBox;
     private javax.swing.JLabel parentLabel;
-    private javax.swing.JPanel varInputPanel;
-    private javax.swing.JPanel varLabelsPanel;
     // End of variables declaration//GEN-END:variables
 }

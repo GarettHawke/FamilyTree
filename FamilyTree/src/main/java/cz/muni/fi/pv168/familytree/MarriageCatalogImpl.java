@@ -26,6 +26,11 @@ public class MarriageCatalogImpl implements MarriageCatalog {
     public MarriageCatalogImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+    
+    public MarriageCatalogImpl(DataSource dataSource, PeopleManager manager) {
+        this.dataSource = dataSource;
+        this.manager = manager;
+    }
 
     @Override
     public void createMarriage(Marriage marriage) {

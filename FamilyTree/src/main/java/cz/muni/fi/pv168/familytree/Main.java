@@ -13,9 +13,13 @@ import org.apache.derby.jdbc.EmbeddedDataSource;
 public class Main {
 
     public static DataSource createMemoryDatabase() throws SQLException, IOException {
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("database");
+        
         EmbeddedDataSource ds = new EmbeddedDataSource();
         ds.setDatabaseName("memory:familyTreeDB");
         ds.setCreateDatabase("create");
+        ds.setUser(bundle.getString("user"));
+        ds.setPassword(bundle.getString("password"));
         
         String createTablePeople = getContentFileJar("SQL-createTablePeople.sql");
         //String insertPeople = getContentFileJar("SQL-insertPeople.sql");
