@@ -7,6 +7,7 @@ package cz.muni.fi.pv168.familytree.gui;
 
 import cz.muni.fi.pv168.familytree.Marriage;
 import cz.muni.fi.pv168.familytree.MarriageCatalogImpl;
+import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import cz.muni.fi.pv168.familytree.ServiceFailureException;
 import java.util.List;
@@ -246,7 +247,7 @@ public class MarriageDialog extends javax.swing.JDialog {
         @Override
         protected Boolean doInBackground() throws Exception {
             try {
-                new MarriageCatalogImpl(dataSource).createMarriage(marriage);
+                new MarriageCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).createMarriage(marriage);
                 //log
                 return false;
             } catch(ServiceFailureException ex) {
@@ -275,7 +276,7 @@ public class MarriageDialog extends javax.swing.JDialog {
         @Override
         protected Integer doInBackground() throws Exception {
             try {
-                new MarriageCatalogImpl(dataSource).updateMarriage(marriage);
+                new MarriageCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).updateMarriage(marriage);
                 //log
                 return 0;
             } catch(ServiceFailureException ex) {

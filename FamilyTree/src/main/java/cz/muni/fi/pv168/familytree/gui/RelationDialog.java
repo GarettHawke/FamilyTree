@@ -166,7 +166,7 @@ public class RelationDialog extends javax.swing.JDialog {
             new CreateRelationSwingWorker().execute();
             setVisible(false);
         } catch(IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), java.util.ResourceBundle.getBundle("localization").getString("warning"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
         } catch (InterruptedException | ExecutionException ex) {
             //log
         }
@@ -199,10 +199,10 @@ public class RelationDialog extends javax.swing.JDialog {
         @Override
         protected Boolean doInBackground() throws Exception {
             try {
-                new RelationCatalogImpl(datasource).makeRelation(parent, child);
+                new RelationCatalogImpl(datasource, new PeopleManagerImpl(datasource)).makeRelation(parent, child);
                 //log
                 return false;
-            } catch(ServiceFailureException ex) {
+            } catch(ServiceFailureException | IllegalArgumentException ex) {
                 //log
                 return true;
             }
