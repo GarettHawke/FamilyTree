@@ -7,7 +7,6 @@ package cz.muni.fi.pv168.familytree.gui;
 
 import cz.muni.fi.pv168.familytree.Marriage;
 import cz.muni.fi.pv168.familytree.MarriageCatalogImpl;
-import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import cz.muni.fi.pv168.familytree.ServiceFailureException;
 import java.util.List;
@@ -37,13 +36,12 @@ public class MarriageDialog extends javax.swing.JDialog {
         initComponents();
     }
     
-    public MarriageDialog(java.awt.Frame parent, boolean modal, DataSource dataSource, Marriage marriage, java.util.ResourceBundle bundle) {
+    public MarriageDialog(java.awt.Frame parent, boolean modal, DataSource dataSource, Marriage marriage, List<Person> peopleList, java.util.ResourceBundle bundle) {
         this(parent, modal);
         this.dataSource = dataSource;
         this.marriage = marriage;
         this.bundle = bundle;
-        //SWINGWORKER
-        list = new PeopleManagerImpl(dataSource).findAllPeople();
+        list = peopleList;
         for (Person person : list) {
             spouse1ComboBox.addItem(person.getName());
             spouse2ComboBox.addItem(person.getName());
@@ -243,29 +241,31 @@ public class MarriageDialog extends javax.swing.JDialog {
         }
     }
     
-    private class createMarriageSwingWorker extends SwingWorker<Integer, Void> {
+    private class createMarriageSwingWorker extends SwingWorker<Boolean, Void> {
 
         @Override
-        protected Integer doInBackground() throws Exception {
+        protected Boolean doInBackground() throws Exception {
             try {
                 new MarriageCatalogImpl(dataSource).createMarriage(marriage);
                 //log
-                return 0;
+                return false;
             } catch(ServiceFailureException ex) {
                 //log
-                return 1;
+                return true;
             }
         }
         
         @Override
         protected void done() {
             try {
-                if (get() == 1) {
+                if (get()) {
                     JOptionPane.showMessageDialog(null, bundle.getString("createMarriageFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
                     //log
+                } else {
+                    updateGUI();
                 }
             } catch(InterruptedException | ExecutionException ex) {
-                //logger
+                //log
             }
         }
     }
@@ -290,11 +290,17 @@ public class MarriageDialog extends javax.swing.JDialog {
                 if (get() == 1) {
                     JOptionPane.showMessageDialog(null, bundle.getString("updateMarriageFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
                     //log
+                } else {
+                    updateGUI();
                 }
             } catch(InterruptedException | ExecutionException ex) {
                 //log
             }
         }
+    }
+    
+    private void updateGUI() {
+        ((FamilyTreeGUI)this.getParent()).updateGUI();
     }
     
     /**

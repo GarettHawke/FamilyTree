@@ -11,11 +11,14 @@ import javax.swing.JFileChooser;
 import static cz.muni.fi.pv168.familytree.Main.createMemoryDatabase;
 import cz.muni.fi.pv168.familytree.Marriage;
 import cz.muni.fi.pv168.familytree.MarriageCatalogImpl;
+import cz.muni.fi.pv168.familytree.Pair;
 import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
+import cz.muni.fi.pv168.familytree.RelationCatalogImpl;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -32,11 +35,10 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     private DataSource dataSource;
     private java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization");
     private File file;
-    private boolean change;
     
     private List<Person> peopleList;
     private List<Marriage>  marriagesList;
-    private Map<Person, List<Person>> relationsMap;
+    private List<Pair<Long, Long>> relationsMap;
     
     public DataSource getDataSource() {
         return dataSource;
@@ -377,17 +379,32 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         deleteMarriageMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_E);
         deleteMarriageMenuItem.setText(bundle.getString("deleteMarriageMenuItem")); // NOI18N
         deleteMarriageMenuItem.setActionCommand(bundle.getString("deleteMarriageMenuItem")); // NOI18N
+        deleteMarriageMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteMarriageMenuItemActionPerformed(evt);
+            }
+        });
         manageMenu.add(deleteMarriageMenuItem);
         manageMenu.add(jSeparator5);
 
         createRelationMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_R);
         createRelationMenuItem.setText(bundle.getString("createRelationMenuItem")); // NOI18N
         createRelationMenuItem.setActionCommand(bundle.getString("createRelationMenuItem")); // NOI18N
+        createRelationMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createRelationMenuItemActionPerformed(evt);
+            }
+        });
         manageMenu.add(createRelationMenuItem);
 
         deleteRelationMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_L);
         deleteRelationMenuItem.setText(bundle.getString("deleteRelationMenuItem")); // NOI18N
         deleteRelationMenuItem.setActionCommand(bundle.getString("deleteRelationMenuItem")); // NOI18N
+        deleteRelationMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteRelationMenuItemActionPerformed(evt);
+            }
+        });
         manageMenu.add(deleteRelationMenuItem);
 
         menuBar.add(manageMenu);
@@ -414,6 +431,11 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
         aboutMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_A);
         aboutMenuItem.setText(bundle.getString("aboutMenuItem")); // NOI18N
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItemActionPerformed(evt);
+            }
+        });
         helpMenu.add(aboutMenuItem);
 
         menuBar.add(helpMenu);
@@ -448,7 +470,8 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             case JOptionPane.YES_OPTION:
                 saveFileMenuItemActionPerformed(evt);
             case JOptionPane.NO_OPTION:
-                newFamilyTree();
+                file = null;
+                new DeleteDatabaseSwingWorker().execute();
                 //log
                 break;
         }
@@ -480,7 +503,6 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     private void createPersonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createPersonMenuItemActionPerformed
         PersonDialog pd = new PersonDialog(this, true, dataSource, null, bundle);
         pd.setVisible(true);
-        updatePeopleTable();
     }//GEN-LAST:event_createPersonMenuItemActionPerformed
 
     private void saveFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileMenuItemActionPerformed
@@ -508,7 +530,6 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         if(peopleTable.getSelectedRow() != -1) {
             PersonDialog pd = new PersonDialog(this, true, dataSource, peopleList.get(peopleTable.getSelectedRow()), bundle);
             pd.setVisible(true);
-            updatePeopleTable();
         } else {
             //log
             JOptionPane.showMessageDialog(this, bundle.getString("noPersonSelected"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
@@ -518,49 +539,75 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     private void deletePersonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletePersonMenuItemActionPerformed
         if(peopleTable.getSelectedRow() != -1) {
             new DeletePersonSwingWorker().execute();
-            updatePeopleTable();
+        } else {
+            //log
+            JOptionPane.showMessageDialog(this, bundle.getString("noPersonSelected"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_deletePersonMenuItemActionPerformed
 
     private void createMarriageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createMarriageMenuItemActionPerformed
         if (peopleList == null || peopleList.size() < 2) {
-            JOptionPane.showMessageDialog(null, bundle.getString("notEnoughPeople"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, bundle.getString("notEnoughPeople"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
             //log
         } else {
-            MarriageDialog md = new MarriageDialog(this, true, dataSource, null, bundle);
+            MarriageDialog md = new MarriageDialog(this, true, dataSource, null, peopleList, bundle);
             md.setTitle(bundle.getString("createPersonMenuItem"));
             md.setVisible(true);
-            updateMarriagesTable();
         }
     }//GEN-LAST:event_createMarriageMenuItemActionPerformed
 
     private void updateMarriageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateMarriageMenuItemActionPerformed
         if (marriagesTable.getSelectedRow() != -1) {
-            MarriageDialog md = new MarriageDialog(this, true, dataSource, marriagesList.get(marriagesTable.getSelectedRow()), bundle);
+            MarriageDialog md = new MarriageDialog(this, true, dataSource, marriagesList.get(marriagesTable.getSelectedRow()), peopleList, bundle);
             md.setTitle(bundle.getString("updatePersonMenuItem"));
             md.setVisible(true);
-            updateMarriagesTable();
         } else {
             JOptionPane.showMessageDialog(this, bundle.getString("noMarriageSelected"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
             //log
         }
     }//GEN-LAST:event_updateMarriageMenuItemActionPerformed
 
-    private void updatePeopleTable() {
+    private void createRelationMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createRelationMenuItemActionPerformed
+        if (peopleList == null || peopleList.size() < 2) {
+            JOptionPane.showMessageDialog(this, bundle.getString("notEnoughPeople"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
+            //log
+        } else {
+            RelationDialog rd = new RelationDialog(this, true, dataSource, peopleList, bundle);
+            rd.setTitle(bundle.getString("createRelationMenuItem"));
+            rd.setVisible(true);
+        }
+    }//GEN-LAST:event_createRelationMenuItemActionPerformed
+
+    private void deleteMarriageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMarriageMenuItemActionPerformed
+        if(marriagesTable.getSelectedRow() != -1) {
+            new DeleteMarriageSwingWorker().execute();
+        } else {
+            //log
+            JOptionPane.showMessageDialog(this, bundle.getString("noMarrigeSelected"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_deleteMarriageMenuItemActionPerformed
+
+    private void deleteRelationMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteRelationMenuItemActionPerformed
+        if(relationsTable.getSelectedRow() != -1) {
+            new DeleteRelationSwingWorker().execute();
+        } else {
+            //log
+            JOptionPane.showMessageDialog(this, bundle.getString("noRelationSelected"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_deleteRelationMenuItemActionPerformed
+
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+        JOptionPane.showMessageDialog(this, bundle.getString("treepanel") + " 2016", bundle.getString("treePanel"), JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
+
+    protected void updateGUI() {
         new PeopleListSwingWorker().execute();
+        new MarriagesListSwingWorker().execute();
+        new RelationMapSwingWorker().execute();
     }
-
-    private void newFamilyTree() {
-        file = null;
-        new DeleteDatabaseSwingWorker().execute();
-    }
-
+    
     private void updateGuiFromFile() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private void updateMarriagesTable() {
-        new MarriagesListSwingWorker().execute();
     }
     
     private class PeopleListSwingWorker extends SwingWorker<List<Person>, Void> {
@@ -572,7 +619,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         @Override
         protected void done() {
             DefaultTableModel model = (DefaultTableModel) peopleTable.getModel();
-            for(int i = 0;  i < model.getRowCount(); i++) {
+            for(int i = model.getRowCount() - 1;  i > -1; i--) {
                 model.removeRow(i);
             }
             try {
@@ -590,40 +637,16 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         }
     }
     
-    private class DeleteDatabaseSwingWorker extends SwingWorker<Void, Void> {
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            new PeopleManagerImpl(dataSource).deleteAll();
-            //log
-            return null;
-        }
-        
-    }
-    
-    private class DeletePersonSwingWorker extends SwingWorker<Void, Void> {
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            new PeopleManagerImpl(dataSource).deletePerson(peopleList.get(peopleTable.getSelectedRow()));
-            //log
-            return null;
-        }
-        
-    }
-    
     private class MarriagesListSwingWorker extends SwingWorker<List<Marriage>, Void> {
         @Override
         protected List<Marriage> doInBackground() throws Exception {
-            MarriageCatalogImpl mc = new MarriageCatalogImpl(dataSource);
-            mc.setPeopleManager(new PeopleManagerImpl(dataSource));
-            return mc.findAllMarriages();
+            return new MarriageCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).findAllMarriages();
         }
         
         @Override
         protected void done() {
             DefaultTableModel model = (DefaultTableModel) marriagesTable.getModel();
-            for(int i = 0;  i < model.getRowCount(); i++) {
+            for(int i = model.getRowCount() - 1;  i > -1; i--) {
                 model.removeRow(i);
             }
             try {
@@ -638,6 +661,102 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             } catch(InterruptedException | ExecutionException ex) {
                 //log
             }
+        }
+    }
+    
+    private class RelationMapSwingWorker extends SwingWorker<Map<Person, List<Person>>, Void> {
+
+        @Override
+        protected Map<Person, List<Person>> doInBackground() throws Exception {
+            return new RelationCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).findAllRelation();
+        }
+        
+        @Override
+        protected void done() {
+            DefaultTableModel model = (DefaultTableModel) relationsTable.getModel();
+            for(int i = model.getRowCount() - 1;  i > -1; i--) {
+                model.removeRow(i);
+            }
+            try {
+                if(relationsMap != null) {
+                    relationsMap.clear();
+                } else {
+                    relationsMap = new ArrayList<>();
+                }
+                for (Map.Entry<Person, List<Person>> entry : get().entrySet()) {
+                    for (Person person : entry.getValue()) {
+                        relationsMap.add(new Pair<Long, Long>(entry.getKey().getId(), person.getId()));
+                        model.addRow(new Object[] {entry.getKey().getName(), person.getName()});
+                    }
+                }
+                //log
+            } catch(InterruptedException | ExecutionException ex) {
+                //log
+            }
+        }
+    }
+    
+    private class DeleteDatabaseSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            new PeopleManagerImpl(dataSource).deleteAll();
+            //log
+            return null;
+        }
+        
+        @Override
+        protected void done() {
+            updateGUI();
+        }
+        
+    }
+    
+    private class DeletePersonSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            new PeopleManagerImpl(dataSource).deletePerson(peopleList.get(peopleTable.getSelectedRow()));
+            //log
+            return null;
+        }
+        
+        @Override
+        protected void done() {
+            updateGUI();
+        }
+        
+    }
+    
+    private class DeleteMarriageSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            new MarriageCatalogImpl(dataSource).deleteMarriage(marriagesList.get(marriagesTable.getSelectedRow()));
+            //log
+            return null;
+        }
+        
+        @Override
+        protected void done() {
+            updateGUI();
+        }
+    }
+    
+    private class DeleteRelationSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            Pair<Long, Long> pair = relationsMap.get(relationsTable.getSelectedRow());
+            Person parent = new PeopleManagerImpl(dataSource).findPersonById(pair.getL());
+            Person child = new PeopleManagerImpl(dataSource).findPersonById(pair.getR());
+            new RelationCatalogImpl(dataSource).deleteRelation(parent, child);
+            return null;
+        }
+        
+        @Override
+        protected void done() {
+            updateGUI();
         }
     }
     

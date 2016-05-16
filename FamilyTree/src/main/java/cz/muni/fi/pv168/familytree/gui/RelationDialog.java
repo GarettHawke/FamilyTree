@@ -10,6 +10,7 @@ import cz.muni.fi.pv168.familytree.Person;
 import cz.muni.fi.pv168.familytree.RelationCatalogImpl;
 import cz.muni.fi.pv168.familytree.ServiceFailureException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import javax.sql.DataSource;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -24,6 +25,10 @@ public class RelationDialog extends javax.swing.JDialog {
     private List<Person> list;
     private Person parent;
     private Person child;
+    private java.util.ResourceBundle bundle;
+    
+    List<Person> parents;
+    boolean getParents;
     /**
      * Creates new form RelationDialog
      */
@@ -32,12 +37,13 @@ public class RelationDialog extends javax.swing.JDialog {
         initComponents();
     }
     
-    public RelationDialog(java.awt.Frame parent, boolean modal, DataSource datasource) {
+    public RelationDialog(java.awt.Frame parent, boolean modal, DataSource datasource, List<Person> peopleList, java.util.ResourceBundle bundle) {
         super(parent, modal);
         initComponents();
         this.datasource = datasource;
-        //SWINGWORKER
-        list = new PeopleManagerImpl(datasource).findAllPeople();
+        this.bundle = bundle;
+        getParents = false;
+        list = peopleList;
         for (Person p : list) {
             parentComboBox.addItem(p.getName());
             childComboBox.addItem(p.getName());
@@ -151,11 +157,18 @@ public class RelationDialog extends javax.swing.JDialog {
         try {
             parent = list.get(parentComboBox.getSelectedIndex());
             child = list.get(childComboBox.getSelectedIndex());
+            getParents = false;
+            GetParentsSwingWorker gp = new GetParentsSwingWorker();
+            gp.execute();
+            while(!gp.isDone());
+            parents = gp.get();
             validateRelation(parent, child);
-            new createRelationSwingWorker().execute();
+            new CreateRelationSwingWorker().execute();
             setVisible(false);
         } catch(IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), java.util.ResourceBundle.getBundle("localization").getString("warning"), JOptionPane.ERROR_MESSAGE);
+        } catch (InterruptedException | ExecutionException ex) {
+            //log
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -164,8 +177,6 @@ public class RelationDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void validateRelation(Person parent, Person child) {
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization"); // NOI18N
-        
         if(parent.equals(child)) {
             throw new IllegalArgumentException(bundle.getString("parentIsChild"));
         }
@@ -175,8 +186,6 @@ public class RelationDialog extends javax.swing.JDialog {
         if(parent.getDateOfBirth().isAfter(child.getDateOfBirth().minusYears(RelationCatalogImpl.ACCEPTED_AGE_FOR_PARENTS))) {
             throw new IllegalArgumentException(bundle.getString("parentTooYoung"));
         }
-        //SWINGWORKER !!!!!!
-        List<Person> parents = new RelationCatalogImpl(datasource).findParents(child);
         if(parents.size() == 2) {
             throw new IllegalArgumentException(bundle.getString("childParents"));
         }
@@ -185,20 +194,45 @@ public class RelationDialog extends javax.swing.JDialog {
         }
     }
     
-    private class createRelationSwingWorker extends SwingWorker<Integer, Void> {
+    private class CreateRelationSwingWorker extends SwingWorker<Boolean, Void> {
 
         @Override
-        protected Integer doInBackground() throws Exception {
+        protected Boolean doInBackground() throws Exception {
             try {
                 new RelationCatalogImpl(datasource).makeRelation(parent, child);
-                //logger
-                return 0;
+                //log
+                return false;
             } catch(ServiceFailureException ex) {
-                //logger
-                return 1;
+                //log
+                return true;
             }
         }
         
+        @Override
+        protected void done() {
+            try {
+                if (get()) {
+                    JOptionPane.showMessageDialog(null, bundle.getString("createRelationFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+                    //log
+                } else {
+                    updateGUI();
+                }
+            } catch(InterruptedException | ExecutionException ex) {
+                //log
+            }
+        }
+        
+    }
+    
+    private class GetParentsSwingWorker extends SwingWorker<List<Person>, Void> {
+        @Override
+        protected List<Person> doInBackground() throws Exception {
+            return new RelationCatalogImpl(datasource, new PeopleManagerImpl(datasource)).findParents(child);
+        }
+    }
+    
+    private void updateGUI() {
+        ((FamilyTreeGUI)this.getParent()).updateGUI();
     }
     
     /**

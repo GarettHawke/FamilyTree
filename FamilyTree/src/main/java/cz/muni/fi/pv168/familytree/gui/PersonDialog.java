@@ -299,6 +299,8 @@ public class PersonDialog extends javax.swing.JDialog {
                 if (get()) {
                     JOptionPane.showMessageDialog(null, bundle.getString("createPersonFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
                     //log
+                } else {
+                    updateGUI();
                 }
             } catch(InterruptedException | ExecutionException ex) {
                 //log
@@ -326,6 +328,8 @@ public class PersonDialog extends javax.swing.JDialog {
                 if (get()) {
                     JOptionPane.showMessageDialog(null, bundle.getString("updatePersonFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
                     //log
+                } else {
+                    updateGUI();
                 }
             } catch(InterruptedException | ExecutionException ex) {
                 //log
@@ -337,6 +341,10 @@ public class PersonDialog extends javax.swing.JDialog {
         this.setVisible(false);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    private void updateGUI() {
+        ((FamilyTreeGUI)this.getParent()).updateGUI();
+    }
+    
     /**
      * @param args the command line arguments
      */
