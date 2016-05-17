@@ -671,8 +671,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
         @Override
         protected Map<Person, List<Person>> doInBackground() throws Exception {
-            Map<Person, List<Person>> map = new RelationCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).findAllRelation();
-            return map;
+            return new RelationCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).findAllRelation();
         }
         
         @Override
