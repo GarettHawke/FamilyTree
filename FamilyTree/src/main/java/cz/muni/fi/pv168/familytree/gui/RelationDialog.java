@@ -9,6 +9,7 @@ import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import cz.muni.fi.pv168.familytree.RelationCatalogImpl;
 import cz.muni.fi.pv168.familytree.ServiceFailureException;
+import static cz.muni.fi.pv168.familytree.gui.FamilyTreeGUI.log;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.sql.DataSource;
@@ -31,6 +32,8 @@ public class RelationDialog extends javax.swing.JDialog {
     boolean getParents;
     /**
      * Creates new form RelationDialog
+     * @param parent
+     * @param modal
      */
     public RelationDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -166,9 +169,10 @@ public class RelationDialog extends javax.swing.JDialog {
             new CreateRelationSwingWorker().execute();
             setVisible(false);
         } catch(IllegalArgumentException ex) {
+            log.warn(ex.getMessage());
             JOptionPane.showMessageDialog(this, ex.getMessage(), java.util.ResourceBundle.getBundle("localization").getString("warning"), JOptionPane.ERROR_MESSAGE);
         } catch (InterruptedException | ExecutionException ex) {
-            //log
+            log.error("Error while Relations ok button", ex); //?????????????????????????????????????????edit message
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -200,10 +204,9 @@ public class RelationDialog extends javax.swing.JDialog {
         protected Boolean doInBackground() throws Exception {
             try {
                 new RelationCatalogImpl(datasource).makeRelation(parent, child);
-                //log
                 return false;
             } catch(ServiceFailureException ex) {
-                //log
+                log.error("Failed to create Relation", ex);
                 return true;
             }
         }
@@ -213,12 +216,12 @@ public class RelationDialog extends javax.swing.JDialog {
             try {
                 if (get()) {
                     JOptionPane.showMessageDialog(null, bundle.getString("createRelationFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
-                    //log
                 } else {
+                    log.info("Successfully created relation in database.");
                     updateGUI();
                 }
             } catch(InterruptedException | ExecutionException ex) {
-                //log
+                log.error("Failed to create Relation", ex);
             }
         }
         

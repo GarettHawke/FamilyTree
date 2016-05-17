@@ -9,6 +9,7 @@ import cz.muni.fi.pv168.familytree.GenderType;
 import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import cz.muni.fi.pv168.familytree.ServiceFailureException;
+import static cz.muni.fi.pv168.familytree.gui.FamilyTreeGUI.log;
 import java.util.concurrent.ExecutionException;
 import javax.sql.DataSource;
 import javax.swing.JOptionPane;
@@ -272,10 +273,8 @@ public class PersonDialog extends javax.swing.JDialog {
             }
             this.setVisible(false);
         } catch (IllegalArgumentException ex) {
-            //log
+            log.error("Failed to validate Person: ", ex);
             JOptionPane.showMessageDialog(this, ex.getMessage(), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
-        } catch (ServiceFailureException ex) {
-            //log
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -285,10 +284,9 @@ public class PersonDialog extends javax.swing.JDialog {
         protected Boolean doInBackground() throws Exception {
             try {
                 new PeopleManagerImpl(ds).createPerson(p);
-                //log
                 return false;
             } catch(ServiceFailureException ex) {
-                //log
+                log.error("Failed to create Person: ", ex);
                 return true;
             }
         }
@@ -298,12 +296,12 @@ public class PersonDialog extends javax.swing.JDialog {
             try {
                 if (get()) {
                     JOptionPane.showMessageDialog(null, bundle.getString("createPersonFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
-                    //log
                 } else {
+                    log.info("Successfully created person in database.");
                     updateGUI();
                 }
             } catch(InterruptedException | ExecutionException ex) {
-                //log
+                log.error("Failed to create Person: ", ex);
             }
         }
     }
@@ -314,10 +312,9 @@ public class PersonDialog extends javax.swing.JDialog {
         protected Boolean doInBackground() throws Exception {
             try {
                 new PeopleManagerImpl(ds).updatePerson(p);
-                //log
                 return false;
             } catch(ServiceFailureException ex) {
-                //log
+                log.error("Failed to update Person: ", ex);
                 return true;
             }
         }
@@ -327,12 +324,12 @@ public class PersonDialog extends javax.swing.JDialog {
             try {
                 if (get()) {
                     JOptionPane.showMessageDialog(null, bundle.getString("updatePersonFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
-                    //log
                 } else {
+                    log.info("Succesfully updated person in database.");
                     updateGUI();
                 }
             } catch(InterruptedException | ExecutionException ex) {
-                //log
+                log.error("Failed to update Person: ", ex);
             }
         }
     }

@@ -9,6 +9,7 @@ import cz.muni.fi.pv168.familytree.Marriage;
 import cz.muni.fi.pv168.familytree.MarriageCatalogImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import cz.muni.fi.pv168.familytree.ServiceFailureException;
+import static cz.muni.fi.pv168.familytree.gui.FamilyTreeGUI.log;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.sql.DataSource;
@@ -205,8 +206,8 @@ public class MarriageDialog extends javax.swing.JDialog {
             }
             setVisible(false);
         } catch(IllegalArgumentException ex) {
+            log.error("Failed to validate Marriage", ex);
             JOptionPane.showMessageDialog(this, ex.getMessage(), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
-            //log
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -247,10 +248,9 @@ public class MarriageDialog extends javax.swing.JDialog {
         protected Boolean doInBackground() throws Exception {
             try {
                 new MarriageCatalogImpl(dataSource).createMarriage(marriage);
-                //log
                 return false;
             } catch(ServiceFailureException ex) {
-                //log
+                log.error("Failed to create Marriage", ex);
                 return true;
             }
         }
@@ -260,12 +260,12 @@ public class MarriageDialog extends javax.swing.JDialog {
             try {
                 if (get()) {
                     JOptionPane.showMessageDialog(null, bundle.getString("createMarriageFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
-                    //log
                 } else {
+                    log.info("Sucessfully created Marriage in database");
                     updateGUI();
                 }
             } catch(InterruptedException | ExecutionException ex) {
-                //log
+                log.error("Failed to create Marriage", ex);
             }
         }
     }
@@ -276,10 +276,9 @@ public class MarriageDialog extends javax.swing.JDialog {
         protected Integer doInBackground() throws Exception {
             try {
                 new MarriageCatalogImpl(dataSource).updateMarriage(marriage);
-                //log
                 return 0;
             } catch(ServiceFailureException ex) {
-                //log
+                log.error("Failed to update Marriage", ex);
                 return 1;
             }
         }
@@ -289,12 +288,12 @@ public class MarriageDialog extends javax.swing.JDialog {
             try {
                 if (get() == 1) {
                     JOptionPane.showMessageDialog(null, bundle.getString("updateMarriageFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
-                    //log
                 } else {
+                    log.info("Sucessfully created Marriage in database");
                     updateGUI();
                 }
             } catch(InterruptedException | ExecutionException ex) {
-                //log
+                log.error("Failed to update Marriage", ex);
             }
         }
     }
