@@ -17,6 +17,7 @@ import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import cz.muni.fi.pv168.familytree.RelationCatalogImpl;
 import cz.muni.fi.pv168.familytree.ServiceFailureException;
+import cz.muni.fi.pv168.familytree.xmlparsing.FamilyTreeXML;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -518,7 +519,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_saveFileMenuItemActionPerformed
 
     private void saveFileAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileAsMenuItemActionPerformed
-        // TODO
+        new SaveXmlSwingWorker().execute();
         //log
     }//GEN-LAST:event_saveFileAsMenuItemActionPerformed
 
@@ -608,8 +609,8 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     }
     
     private void updateGuiFromFile() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         //log
+        new OpenXmlSwingWorker().execute();
     }
     
     private class PeopleListSwingWorker extends SwingWorker<List<Person>, Void> {
@@ -670,7 +671,8 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
         @Override
         protected Map<Person, List<Person>> doInBackground() throws Exception {
-            return new RelationCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).findAllRelation();
+            Map<Person, List<Person>> map = new RelationCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).findAllRelation();
+            return map;
         }
         
         @Override
@@ -743,7 +745,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         @Override
         protected Void doInBackground() throws Exception {
             try {
-                new MarriageCatalogImpl(dataSource).deleteMarriage(marriagesList.get(marriagesTable.getSelectedRow()));
+                new MarriageCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).deleteMarriage(marriagesList.get(marriagesTable.getSelectedRow()));
             } catch (EntityNotFoundException | ServiceFailureException ex) {
                 log.error("Failed to delete Marriage", ex);
             }
@@ -776,6 +778,77 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         protected void done() {
             log.info("Relation successfully deleted");
             updateGUI();
+        }
+    }
+    
+    private class SaveXmlSwingWorker extends SwingWorker<Boolean, Void> {
+
+        @Override
+        protected Boolean doInBackground() throws Exception {
+            return new FamilyTreeXML(file).create(new PeopleManagerImpl(dataSource).findAllPeople(),
+                                                    new MarriageCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).findAllMarriages(),
+                                                    new RelationCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).findAllRelation());
+        }
+        
+        @Override
+        protected void done() {
+            try {
+                if(get()) {
+                    JOptionPane.showMessageDialog(null, bundle.getString("fileSaved"), bundle.getString("info"), JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, bundle.getString("fileNotSaved"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (InterruptedException | ExecutionException ex) {
+                //log
+            }
+        }
+    }
+    
+    private class OpenXmlSwingWorker extends SwingWorker<Boolean, Void> {
+        private FamilyTreeXML xml;
+
+        @Override
+        protected Boolean doInBackground() throws Exception {
+            DeleteDatabaseSwingWorker ddsw = new DeleteDatabaseSwingWorker();
+            ddsw.execute();
+            while(!ddsw.isDone());
+            xml = new FamilyTreeXML(file);
+            if (xml.parse()) {
+                PeopleManagerImpl manager = new PeopleManagerImpl(dataSource);
+                for (Person person : xml.getPeople()) {
+                    person.setId(null);
+                    manager.createPerson(person);
+                }
+                MarriageCatalogImpl mCatalog = new MarriageCatalogImpl(dataSource, manager);
+                for (Marriage marriage : xml.getMarriages()) {
+                    marriage.setId(null);
+                    mCatalog.createMarriage(marriage);
+                }
+                RelationCatalogImpl rCatalog = new RelationCatalogImpl(dataSource, manager);
+                for (Map.Entry<Person, List<Person>> entry : xml.getRelations().entrySet()) {
+                    for (Person person : entry.getValue()) {
+                        rCatalog.makeRelation(entry.getKey(), person);
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+        @Override
+        protected void done() {
+            try {
+                if(get()) {
+                    //done
+                    updateGUI();
+                } else {
+                    //error
+                    JOptionPane.showMessageDialog(null, bundle.getString("fileNotOpened"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (InterruptedException | ExecutionException ex) {
+                //log
+            }
         }
     }
     

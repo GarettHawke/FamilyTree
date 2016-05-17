@@ -7,6 +7,7 @@ package cz.muni.fi.pv168.familytree.gui;
 
 import cz.muni.fi.pv168.familytree.Marriage;
 import cz.muni.fi.pv168.familytree.MarriageCatalogImpl;
+import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import cz.muni.fi.pv168.familytree.ServiceFailureException;
 import static cz.muni.fi.pv168.familytree.gui.FamilyTreeGUI.log;
@@ -247,9 +248,9 @@ public class MarriageDialog extends javax.swing.JDialog {
         @Override
         protected Boolean doInBackground() throws Exception {
             try {
-                new MarriageCatalogImpl(dataSource).createMarriage(marriage);
+                new MarriageCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).createMarriage(marriage);
                 return false;
-            } catch(ServiceFailureException ex) {
+            } catch(ServiceFailureException | IllegalArgumentException ex) {
                 log.error("Failed to create Marriage", ex);
                 return true;
             }
@@ -275,9 +276,9 @@ public class MarriageDialog extends javax.swing.JDialog {
         @Override
         protected Integer doInBackground() throws Exception {
             try {
-                new MarriageCatalogImpl(dataSource).updateMarriage(marriage);
+                new MarriageCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).updateMarriage(marriage);
                 return 0;
-            } catch(ServiceFailureException ex) {
+            } catch(ServiceFailureException | IllegalArgumentException ex) {
                 log.error("Failed to update Marriage", ex);
                 return 1;
             }
