@@ -163,16 +163,16 @@ public class RelationDialog extends javax.swing.JDialog {
             getParents = false;
             GetParentsSwingWorker gp = new GetParentsSwingWorker();
             gp.execute();
-            while(!gp.isDone());
+            while(!gp.isDone()){};
             parents = gp.get();
             validateRelation(parent, child);
             new CreateRelationSwingWorker().execute();
             setVisible(false);
         } catch(IllegalArgumentException ex) {
             LOG.warn(ex.getMessage());
-            JOptionPane.showMessageDialog(this, ex.getMessage(), java.util.ResourceBundle.getBundle("localization").getString("warning"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
         } catch (InterruptedException | ExecutionException ex) {
-            LOG.error("Error while Relations ok button", ex); //?????????????????????????????????????????edit message
+            LOG.error("Error while creating realtion", ex); 
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -203,9 +203,9 @@ public class RelationDialog extends javax.swing.JDialog {
         @Override
         protected Boolean doInBackground() throws Exception {
             try {
-                new RelationCatalogImpl(datasource).makeRelation(parent, child);
+                new RelationCatalogImpl(datasource, new PeopleManagerImpl(datasource)).makeRelation(parent, child);
                 return false;
-            } catch(ServiceFailureException ex) {
+            } catch(ServiceFailureException | IllegalArgumentException ex) {
                 LOG.error("Failed to create Relation", ex);
                 return true;
             }

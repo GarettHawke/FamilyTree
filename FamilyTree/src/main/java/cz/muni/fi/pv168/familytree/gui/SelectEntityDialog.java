@@ -13,8 +13,6 @@ import javax.sql.DataSource;
  * @author brani
  */
 public class SelectEntityDialog extends javax.swing.JDialog {
-    
-    private DataSource ds;
 
     /**
      * Creates new form SelectEntity
@@ -28,7 +26,6 @@ public class SelectEntityDialog extends javax.swing.JDialog {
     
     public SelectEntityDialog(java.awt.Frame parent, boolean modal, List<Object> list, Class cla, DataSource ds) {
         this(parent, modal);
-        this.ds = ds;
         PeopleManager  manager= new PeopleManagerImpl(ds);
         for (Object entity : list) {
             if (cla == Person.class) {
@@ -37,7 +34,7 @@ public class SelectEntityDialog extends javax.swing.JDialog {
                 selectorComboBox.addItem(((Marriage)entity).getSpouse1().getName() + " + " + 
                                         ((Marriage)entity).getSpouse2().getName());
             } else {
-                selectorComboBox.addItem(manager.findPersonById((Long)((Pair)entity).getL()).getName() + " + " +
+                selectorComboBox.addItem(manager.findPersonById((Long)((Pair)entity).getL()).getName() + " -> " +
                                         manager.findPersonById((Long)((Pair)entity).getR()).getName());
             }
         }

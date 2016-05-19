@@ -608,7 +608,6 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         if (marriagesList != null && marriagesList.size()>0) {    
             SelectEntityDialog sed = new SelectEntityDialog(this, true, (List<Object>)(Object)marriagesList, Marriage.class, dataSource);
             sed.setVisible(true);
-            System.err.println("??");
             marriagesTable.setRowSelectionInterval(sed.getResult(), sed.getResult());
             jTabbedPane1.setSelectedComponent(marriagesPanel);
         } else {
@@ -746,11 +745,17 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     }
     
     private class DeletePersonSwingWorker extends SwingWorker<Void, Void> {
+        
+        private int row;
 
+        public DeletePersonSwingWorker() {
+            this.row = peopleTable.getSelectedRow();
+        }
+        
         @Override
         protected Void doInBackground() throws Exception {
             try {
-                new PeopleManagerImpl(dataSource).deletePerson(peopleList.get(peopleTable.getSelectedRow()));
+                new PeopleManagerImpl(dataSource).deletePerson(peopleList.get(row));
             } catch (EntityNotFoundException | ServiceFailureException ex) {
                 LOG.error("Failed to delete Person", ex);
             }
@@ -838,7 +843,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         protected Boolean doInBackground() throws Exception {
             DeleteDatabaseSwingWorker ddsw = new DeleteDatabaseSwingWorker();
             ddsw.execute();
-            while(!ddsw.isDone());
+            while(!ddsw.isDone()){};
             xml = new FamilyTreeXML(file);
             if (xml.parse()) {
                 PeopleManagerImpl manager = new PeopleManagerImpl(dataSource);
