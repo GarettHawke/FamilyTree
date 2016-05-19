@@ -1,4 +1,4 @@
-package cz.muni.fi.pv168.familytree.xmlparsing;
+package cz.muni.fi.pv168.familytree.gui;
 
 import cz.muni.fi.pv168.familytree.GenderType;
 import cz.muni.fi.pv168.familytree.Marriage;
@@ -27,6 +27,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import static cz.muni.fi.pv168.familytree.gui.FamilyTreeGUI.LOG;
 /**
  *
  * @author Peter
@@ -83,6 +84,7 @@ public class FamilyTreeXML {
             
             return true;
         } catch(ParserConfigurationException | SAXException | IOException ex) {
+            LOG.error("Error while parsing a file", ex);
             return false;
         }
     }
@@ -127,6 +129,7 @@ public class FamilyTreeXML {
             
             return true;
         } catch(ParserConfigurationException | DOMException | TransformerException ex) {
+            LOG.error("Error while creating a file", ex);
             return false;
         }
     }

@@ -17,7 +17,6 @@ import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import cz.muni.fi.pv168.familytree.RelationCatalogImpl;
 import cz.muni.fi.pv168.familytree.ServiceFailureException;
-import cz.muni.fi.pv168.familytree.xmlparsing.FamilyTreeXML;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -37,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FamilyTreeGUI extends javax.swing.JFrame {
     
-    final static Logger log =  LoggerFactory.getLogger(FamilyTreeGUI.class);
+    final static Logger LOG =  LoggerFactory.getLogger(FamilyTreeGUI.class);
 
     private DataSource dataSource;
     private java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("localization");
@@ -45,7 +44,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     
     private List<Person> peopleList;
     private List<Marriage>  marriagesList;
-    private List<Pair<Long, Long>> relationsMap;
+    private List<Pair<Long, Long>> relationsList;
     
     public DataSource getDataSource() {
         return dataSource;
@@ -59,7 +58,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         try {
             dataSource = createMemoryDatabase();
         } catch(SQLException | IOException ex) {
-            log.error("Failed to create FamilyTreeGUI: ", ex);
+            LOG.error("Failed to create FamilyTreeGUI: ", ex);
         }
         file = null;
     }
@@ -83,8 +82,6 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         relationsPanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         relationsTable = new javax.swing.JTable();
-        treePanel = new javax.swing.JPanel();
-        jScrollPane4 = new javax.swing.JScrollPane();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         newFileMenuItem = new javax.swing.JMenuItem();
@@ -254,27 +251,6 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
         jTabbedPane1.addTab(bundle.getString("relationsPanel"), relationsPanel); // NOI18N
 
-        jScrollPane4.setBackground(new java.awt.Color(255, 255, 255));
-
-        javax.swing.GroupLayout treePanelLayout = new javax.swing.GroupLayout(treePanel);
-        treePanel.setLayout(treePanelLayout);
-        treePanelLayout.setHorizontalGroup(
-            treePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(treePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        treePanelLayout.setVerticalGroup(
-            treePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(treePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        jTabbedPane1.addTab(bundle.getString("treePanel"), treePanel); // NOI18N
-
         fileMenu.setMnemonic(java.awt.event.KeyEvent.VK_F);
         fileMenu.setText(bundle.getString("fileMenu")); // NOI18N
 
@@ -421,14 +397,29 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
         findPersonMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_P);
         findPersonMenuItem.setText(bundle.getString("findPersonMenuItem")); // NOI18N
+        findPersonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                findPersonMenuItemActionPerformed(evt);
+            }
+        });
         findMenu.add(findPersonMenuItem);
 
         findMarriageMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_M);
         findMarriageMenuItem.setText(bundle.getString("findMarriageMenuItem")); // NOI18N
+        findMarriageMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                findMarriageMenuItemActionPerformed(evt);
+            }
+        });
         findMenu.add(findMarriageMenuItem);
 
         findRelationMenuItem.setMnemonic(java.awt.event.KeyEvent.VK_R);
         findRelationMenuItem.setText(bundle.getString("findRelationMenuItem")); // NOI18N
+        findRelationMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                findRelationMenuItemActionPerformed(evt);
+            }
+        });
         findMenu.add(findRelationMenuItem);
 
         menuBar.add(findMenu);
@@ -520,11 +511,10 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
 
     private void saveFileAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileAsMenuItemActionPerformed
         new SaveXmlSwingWorker().execute();
-        //log
     }//GEN-LAST:event_saveFileAsMenuItemActionPerformed
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-        log.info("Exiting aplication");
+        LOG.info("Exiting aplication");
         System.exit(0);
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
@@ -533,7 +523,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             PersonDialog pd = new PersonDialog(this, true, dataSource, peopleList.get(peopleTable.getSelectedRow()), bundle);
             pd.setVisible(true);
         } else {
-            log.warn("No Person selected while updating");
+            LOG.warn("No Person selected while updating");
             JOptionPane.showMessageDialog(this, bundle.getString("noPersonSelected"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_updatePersonMenuItemActionPerformed
@@ -542,7 +532,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         if(peopleTable.getSelectedRow() != -1) {
             new DeletePersonSwingWorker().execute();
         } else {
-            log.warn("No Person selected while deleting");
+            LOG.warn("No Person selected while deleting");
             JOptionPane.showMessageDialog(this, bundle.getString("noPersonSelected"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_deletePersonMenuItemActionPerformed
@@ -550,7 +540,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     private void createMarriageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createMarriageMenuItemActionPerformed
         if (peopleList == null || peopleList.size() < 2) {
             JOptionPane.showMessageDialog(this, bundle.getString("notEnoughPeople"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
-            log.warn("No enough people while creating marriage");
+            LOG.warn("No enough people while creating marriage");
         } else {
             MarriageDialog md = new MarriageDialog(this, true, dataSource, null, peopleList, bundle);
             md.setTitle(bundle.getString("createPersonMenuItem"));
@@ -565,14 +555,14 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             md.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, bundle.getString("noMarriageSelected"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
-            log.warn("No marriage selected while updating");
+            LOG.warn("No marriage selected while updating");
         }
     }//GEN-LAST:event_updateMarriageMenuItemActionPerformed
 
     private void createRelationMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createRelationMenuItemActionPerformed
         if (peopleList == null || peopleList.size() < 2) {
             JOptionPane.showMessageDialog(this, bundle.getString("notEnoughPeople"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
-            log.warn("No enough people while creating relation");
+            LOG.warn("No enough people while creating relation");
         } else {
             RelationDialog rd = new RelationDialog(this, true, dataSource, peopleList, bundle);
             rd.setTitle(bundle.getString("createRelationMenuItem"));
@@ -584,7 +574,7 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         if(marriagesTable.getSelectedRow() != -1) {
             new DeleteMarriageSwingWorker().execute();
         } else {
-            log.warn("No marriage selected while deleting");
+            LOG.warn("No marriage selected while deleting");
             JOptionPane.showMessageDialog(this, bundle.getString("noMarrigeSelected"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_deleteMarriageMenuItemActionPerformed
@@ -593,14 +583,51 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         if(relationsTable.getSelectedRow() != -1) {
             new DeleteRelationSwingWorker().execute();
         } else {
-            log.warn("No relation selected while deleting");
+            LOG.warn("No relation selected while deleting");
             JOptionPane.showMessageDialog(this, bundle.getString("noRelationSelected"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_deleteRelationMenuItemActionPerformed
 
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-        JOptionPane.showMessageDialog(this, bundle.getString("treepanel") + " 2016", bundle.getString("treePanel"), JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, bundle.getString("treepanel"), bundle.getString("aboutMenuItem"), JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_aboutMenuItemActionPerformed
+
+    private void findPersonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findPersonMenuItemActionPerformed
+        if (peopleList != null && peopleList.size()>0) {
+            SelectEntityDialog sed = new SelectEntityDialog(this, true, (List<Object>)(Object)peopleList, Person.class, dataSource);
+            sed.setVisible(true);
+            peopleTable.setRowSelectionInterval(sed.getResult(), sed.getResult());
+            jTabbedPane1.setSelectedComponent(peoplePanel);
+        } else {
+            LOG.warn("No Person present");
+            JOptionPane.showMessageDialog(this, bundle.getString("notEnoughPeople"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_findPersonMenuItemActionPerformed
+
+    private void findMarriageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findMarriageMenuItemActionPerformed
+        if (marriagesList != null && marriagesList.size()>0) {    
+            SelectEntityDialog sed = new SelectEntityDialog(this, true, (List<Object>)(Object)marriagesList, Marriage.class, dataSource);
+            sed.setVisible(true);
+            System.err.println("??");
+            marriagesTable.setRowSelectionInterval(sed.getResult(), sed.getResult());
+            jTabbedPane1.setSelectedComponent(marriagesPanel);
+        } else {
+            LOG.warn("No Mariages present");
+            JOptionPane.showMessageDialog(this, bundle.getString("notEnoughMarriages"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_findMarriageMenuItemActionPerformed
+
+    private void findRelationMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findRelationMenuItemActionPerformed
+        if (relationsList != null && relationsList.size()>0) {    
+            SelectEntityDialog sed = new SelectEntityDialog(this, true, (List<Object>)(Object)relationsList, null, dataSource);
+            sed.setVisible(true);
+            relationsTable.setRowSelectionInterval(sed.getResult(), sed.getResult());
+            jTabbedPane1.setSelectedComponent(relationsPanel);
+        } else {
+            LOG.warn("No Realtions present");
+            JOptionPane.showMessageDialog(this, bundle.getString("notEnoughRelations"), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_findRelationMenuItemActionPerformed
 
     protected void updateGUI() {
         new PeopleListSwingWorker().execute();
@@ -609,7 +636,6 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     }
     
     private void updateGuiFromFile() {
-        //log
         new OpenXmlSwingWorker().execute();
     }
     
@@ -633,9 +659,9 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
                     Person p = peopleList.get(i);
                     model.addRow(new Object[]{p.getName(), p.getGender(), p.getDateOfBirth(), p.getPlaceOfBirth(), p.getDateOfDeath(), p.getPlaceOfDeath()});
                 }
-                log.info("Successfully updated People table.");
+                LOG.info("Successfully updated People table.");
             } catch(InterruptedException | ExecutionException ex) {
-                log.error("Failed to update People table", ex);
+                LOG.error("Failed to update People table", ex);
             }
         }
     }
@@ -660,9 +686,9 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
                     Marriage m = marriagesList.get(i);
                     model.addRow(new Object[]{m.getSpouse1().getName(), m.getSpouse2().getName(), m.getFrom(), m.getTo()});
                 }
-                log.info("Successfully updated Marriages table.");
+                LOG.info("Successfully updated Marriages table.");
             } catch(InterruptedException | ExecutionException ex) {
-                log.error("Failed to update Marriages table", ex);
+                LOG.error("Failed to update Marriages table", ex);
             }
         }
     }
@@ -681,20 +707,20 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
                 model.removeRow(i);
             }
             try {
-                if(relationsMap != null) {
-                    relationsMap.clear();
+                if(relationsList != null) {
+                    relationsList.clear();
                 } else {
-                    relationsMap = new ArrayList<>();
+                    relationsList = new ArrayList<>();
                 }
                 for (Map.Entry<Person, List<Person>> entry : get().entrySet()) {
                     for (Person person : entry.getValue()) {
-                        relationsMap.add(new Pair<>(entry.getKey().getId(), person.getId()));
+                        relationsList.add(new Pair<>(entry.getKey().getId(), person.getId()));
                         model.addRow(new Object[] {entry.getKey().getName(), person.getName()});
                     }
                 }
-                log.info("Successfully updated Relations table.");
+                LOG.info("Successfully updated Relations table.");
             } catch(InterruptedException | ExecutionException ex) {
-                log.error("Failed to update Relations table", ex);
+                LOG.error("Failed to update Relations table", ex);
             }
         }
     }
@@ -706,14 +732,14 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             try {
                 new PeopleManagerImpl(dataSource).deleteAll();
             } catch (ServiceFailureException ex) {
-                log.error("Failed to delete database", ex);
+                LOG.error("Failed to delete database", ex);
             }
             return null;
         }
         
         @Override
         protected void done() {
-            log.info("Database successfully deleted");
+            LOG.info("Database successfully deleted");
             updateGUI();
         }
         
@@ -726,14 +752,14 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             try {
                 new PeopleManagerImpl(dataSource).deletePerson(peopleList.get(peopleTable.getSelectedRow()));
             } catch (EntityNotFoundException | ServiceFailureException ex) {
-                log.error("Failed to delete Person", ex);
+                LOG.error("Failed to delete Person", ex);
             }
             return null;
         }
         
         @Override
         protected void done() {
-            log.info("Person successfully deleted");
+            LOG.info("Person successfully deleted");
             updateGUI();
         }
         
@@ -746,14 +772,14 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             try {
                 new MarriageCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).deleteMarriage(marriagesList.get(marriagesTable.getSelectedRow()));
             } catch (EntityNotFoundException | ServiceFailureException ex) {
-                log.error("Failed to delete Marriage", ex);
+                LOG.error("Failed to delete Marriage", ex);
             }
             return null;
         }
         
         @Override
         protected void done() {
-            log.info("Marriage successfully deleted");
+            LOG.info("Marriage successfully deleted");
             updateGUI();
         }
     }
@@ -763,19 +789,19 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
         @Override
         protected Void doInBackground() throws Exception {
             try {
-                Pair<Long, Long> pair = relationsMap.get(relationsTable.getSelectedRow());
+                Pair<Long, Long> pair = relationsList.get(relationsTable.getSelectedRow());
                 Person parent = new PeopleManagerImpl(dataSource).findPersonById(pair.getL());
                 Person child = new PeopleManagerImpl(dataSource).findPersonById(pair.getR());
                 new RelationCatalogImpl(dataSource).deleteRelation(parent, child);
             } catch (EntityNotFoundException | ServiceFailureException ex) {
-                log.error("Failed to delete Relation", ex);
+                LOG.error("Failed to delete Relation", ex);
             }
             return null;
         }
         
         @Override
         protected void done() {
-            log.info("Relation successfully deleted");
+            LOG.info("Relation successfully deleted");
             updateGUI();
         }
     }
@@ -794,11 +820,13 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             try {
                 if(get()) {
                     JOptionPane.showMessageDialog(null, bundle.getString("fileSaved"), bundle.getString("info"), JOptionPane.INFORMATION_MESSAGE);
+                    LOG.info("Saved to file " + file.toString());
                 } else {
                     JOptionPane.showMessageDialog(null, bundle.getString("fileNotSaved"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+                    LOG.error("Failed to save to file");
                 }
             } catch (InterruptedException | ExecutionException ex) {
-                //log
+                LOG.error("Failed to save to file", ex);
             }
         }
     }
@@ -840,13 +868,16 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
             try {
                 if(get()) {
                     //done
+                    LOG.info("Opened a file " + file.toString());
                     updateGUI();
                 } else {
                     //error
+                    LOG.error("Failed to open a file");
                     JOptionPane.showMessageDialog(null, bundle.getString("fileNotOpened"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
                 }
             } catch (InterruptedException | ExecutionException ex) {
                 //log
+                LOG.error("Failed to open a file", ex);
             }
         }
     }
@@ -904,7 +935,6 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
@@ -923,7 +953,6 @@ public class FamilyTreeGUI extends javax.swing.JFrame {
     private javax.swing.JTable relationsTable;
     private javax.swing.JMenuItem saveFileAsMenuItem;
     private javax.swing.JMenuItem saveFileMenuItem;
-    private javax.swing.JPanel treePanel;
     private javax.swing.JMenuItem updateMarriageMenuItem;
     private javax.swing.JMenuItem updatePersonMenuItem;
     // End of variables declaration//GEN-END:variables

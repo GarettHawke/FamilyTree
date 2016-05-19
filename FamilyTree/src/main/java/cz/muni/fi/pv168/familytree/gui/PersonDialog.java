@@ -9,11 +9,11 @@ import cz.muni.fi.pv168.familytree.GenderType;
 import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import cz.muni.fi.pv168.familytree.ServiceFailureException;
-import static cz.muni.fi.pv168.familytree.gui.FamilyTreeGUI.log;
 import java.util.concurrent.ExecutionException;
 import javax.sql.DataSource;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+import static cz.muni.fi.pv168.familytree.gui.FamilyTreeGUI.LOG;
 
 /**
  *
@@ -267,7 +267,7 @@ public class PersonDialog extends javax.swing.JDialog {
             }
             this.setVisible(false);
         } catch (IllegalArgumentException ex) {
-            log.error("Failed to validate Person: ", ex);
+            LOG.error("Failed to validate Person: ", ex);
             JOptionPane.showMessageDialog(this, ex.getMessage(), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_okButtonActionPerformed
@@ -280,7 +280,7 @@ public class PersonDialog extends javax.swing.JDialog {
                 new PeopleManagerImpl(ds).createPerson(p);
                 return false;
             } catch(ServiceFailureException ex) {
-                log.error("Failed to create Person: ", ex);
+                LOG.error("Failed to create Person: ", ex);
                 return true;
             }
         }
@@ -291,11 +291,11 @@ public class PersonDialog extends javax.swing.JDialog {
                 if (get()) {
                     JOptionPane.showMessageDialog(null, bundle.getString("createPersonFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
                 } else {
-                    log.info("Successfully created person in database.");
+                    LOG.info("Successfully created person in database.");
                     updateGUI();
                 }
             } catch(InterruptedException | ExecutionException ex) {
-                log.error("Failed to create Person: ", ex);
+                LOG.error("Failed to create Person: ", ex);
             }
         }
     }
@@ -308,7 +308,7 @@ public class PersonDialog extends javax.swing.JDialog {
                 new PeopleManagerImpl(ds).updatePerson(p);
                 return false;
             } catch(ServiceFailureException ex) {
-                log.error("Failed to update Person: ", ex);
+                LOG.error("Failed to update Person: ", ex);
                 return true;
             }
         }
@@ -319,11 +319,11 @@ public class PersonDialog extends javax.swing.JDialog {
                 if (get()) {
                     JOptionPane.showMessageDialog(null, bundle.getString("updatePersonFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
                 } else {
-                    log.info("Succesfully updated person in database.");
+                    LOG.info("Succesfully updated person in database.");
                     updateGUI();
                 }
             } catch(InterruptedException | ExecutionException ex) {
-                log.error("Failed to update Person: ", ex);
+                LOG.error("Failed to update Person: ", ex);
             }
         }
     }

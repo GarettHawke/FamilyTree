@@ -9,12 +9,12 @@ import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import cz.muni.fi.pv168.familytree.RelationCatalogImpl;
 import cz.muni.fi.pv168.familytree.ServiceFailureException;
-import static cz.muni.fi.pv168.familytree.gui.FamilyTreeGUI.log;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.sql.DataSource;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+import static cz.muni.fi.pv168.familytree.gui.FamilyTreeGUI.LOG;
 
 /**
  *
@@ -169,10 +169,10 @@ public class RelationDialog extends javax.swing.JDialog {
             new CreateRelationSwingWorker().execute();
             setVisible(false);
         } catch(IllegalArgumentException ex) {
-            log.warn(ex.getMessage());
+            LOG.warn(ex.getMessage());
             JOptionPane.showMessageDialog(this, ex.getMessage(), java.util.ResourceBundle.getBundle("localization").getString("warning"), JOptionPane.ERROR_MESSAGE);
         } catch (InterruptedException | ExecutionException ex) {
-            log.error("Error while Relations ok button", ex); //?????????????????????????????????????????edit message
+            LOG.error("Error while Relations ok button", ex); //?????????????????????????????????????????edit message
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -206,7 +206,7 @@ public class RelationDialog extends javax.swing.JDialog {
                 new RelationCatalogImpl(datasource).makeRelation(parent, child);
                 return false;
             } catch(ServiceFailureException ex) {
-                log.error("Failed to create Relation", ex);
+                LOG.error("Failed to create Relation", ex);
                 return true;
             }
         }
@@ -217,11 +217,11 @@ public class RelationDialog extends javax.swing.JDialog {
                 if (get()) {
                     JOptionPane.showMessageDialog(null, bundle.getString("createRelationFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
                 } else {
-                    log.info("Successfully created relation in database.");
+                    LOG.info("Successfully created relation in database.");
                     updateGUI();
                 }
             } catch(InterruptedException | ExecutionException ex) {
-                log.error("Failed to create Relation", ex);
+                LOG.error("Failed to create Relation", ex);
             }
         }
         

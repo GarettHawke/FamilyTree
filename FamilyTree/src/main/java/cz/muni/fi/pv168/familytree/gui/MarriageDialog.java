@@ -10,12 +10,12 @@ import cz.muni.fi.pv168.familytree.MarriageCatalogImpl;
 import cz.muni.fi.pv168.familytree.PeopleManagerImpl;
 import cz.muni.fi.pv168.familytree.Person;
 import cz.muni.fi.pv168.familytree.ServiceFailureException;
-import static cz.muni.fi.pv168.familytree.gui.FamilyTreeGUI.log;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.sql.DataSource;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+import static cz.muni.fi.pv168.familytree.gui.FamilyTreeGUI.LOG;
 
 /**
  *
@@ -207,7 +207,7 @@ public class MarriageDialog extends javax.swing.JDialog {
             }
             setVisible(false);
         } catch(IllegalArgumentException ex) {
-            log.error("Failed to validate Marriage", ex);
+            LOG.error("Failed to validate Marriage", ex);
             JOptionPane.showMessageDialog(this, ex.getMessage(), bundle.getString("warning"), JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_okButtonActionPerformed
@@ -251,7 +251,7 @@ public class MarriageDialog extends javax.swing.JDialog {
                 new MarriageCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).createMarriage(marriage);
                 return false;
             } catch(ServiceFailureException | IllegalArgumentException ex) {
-                log.error("Failed to create Marriage", ex);
+                LOG.error("Failed to create Marriage", ex);
                 return true;
             }
         }
@@ -262,11 +262,11 @@ public class MarriageDialog extends javax.swing.JDialog {
                 if (get()) {
                     JOptionPane.showMessageDialog(null, bundle.getString("createMarriageFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
                 } else {
-                    log.info("Sucessfully created Marriage in database");
+                    LOG.info("Sucessfully created Marriage in database");
                     updateGUI();
                 }
             } catch(InterruptedException | ExecutionException ex) {
-                log.error("Failed to create Marriage", ex);
+                LOG.error("Failed to create Marriage", ex);
             }
         }
     }
@@ -279,7 +279,7 @@ public class MarriageDialog extends javax.swing.JDialog {
                 new MarriageCatalogImpl(dataSource, new PeopleManagerImpl(dataSource)).updateMarriage(marriage);
                 return 0;
             } catch(ServiceFailureException | IllegalArgumentException ex) {
-                log.error("Failed to update Marriage", ex);
+                LOG.error("Failed to update Marriage", ex);
                 return 1;
             }
         }
@@ -290,11 +290,11 @@ public class MarriageDialog extends javax.swing.JDialog {
                 if (get() == 1) {
                     JOptionPane.showMessageDialog(null, bundle.getString("updateMarriageFail"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
                 } else {
-                    log.info("Sucessfully created Marriage in database");
+                    LOG.info("Sucessfully created Marriage in database");
                     updateGUI();
                 }
             } catch(InterruptedException | ExecutionException ex) {
-                log.error("Failed to update Marriage", ex);
+                LOG.error("Failed to update Marriage", ex);
             }
         }
     }
